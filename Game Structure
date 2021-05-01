@@ -1,0 +1,33 @@
+Game Structure -
+
+
+Game Loading Screen
+	Just an animation bar loading
+	Used when game is started and initialization is going on
+	
+Maze Loading Screen
+	Used while new maze is being formed
+	https://en.wikipedia.org/wiki/User:Dllu/Maze - kind of like videos on this page
+
+
+Main Menu Screen
+	Displays the currently loaded maze
+	Options - New Game, Generate new maze, (Load up an old maze, Save this maze), Sound Toggle
+	
+
+Gameplay Screen
+	Maze - 2 Players
+	At start, both spawn at opposite ends
+	Goal? - 2 Player Pacman - where the goal is to eat the most candy (score +1 for each candy)
+	2/3 ghosts as well
+	contact with ghost from front => random respawn after 1.5 sec and score -5
+	contact with ghost from behind or side => ghost will random respawn, score +5 and movespeed increased 50% for 3 sec
+	contact with each other => guy with lower score random respawn after 2 sec and score -10
+	WASD (p1) and Arrow (p2) commands
+
+
+Game Over Screen
+	Score for both players
+	Declare winner
+	Game Over written
+	Back to Main Menu
