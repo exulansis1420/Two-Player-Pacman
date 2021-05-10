@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture *texture, *text;
 TTF_Font* font, *font2;
+Mix_Chunk *menuchange = NULL, *intro = NULL;
 string ee;
 
 int main(int argc, char** args) {
@@ -24,7 +26,8 @@ int main(int argc, char** args) {
         system("pause");
         return 1;
     }
-
+    
+    
     while ( loop() ) {
         SDL_Delay(10);
     }
@@ -34,7 +37,7 @@ int main(int argc, char** args) {
 }
 SDL_Event e;
 int ax=0,ay=0;
-
+bool intro_played = false;
 bool loop() {
 
     SDL_Rect dest;
@@ -73,11 +76,13 @@ bool loop() {
                 ax+=3;
                 ay+=3;
             }
+            Mix_PlayChannel( -1, menuchange, 0 );
             
         }
         if (keys[SDL_SCANCODE_DOWN]){
             ax= (ax+1)%3 ;
             ay= (ay+1)%3 ;
+            Mix_PlayChannel( -1, menuchange, 0 );
            
         }
     }
@@ -162,8 +167,15 @@ bool loop() {
 
         SDL_DestroyTexture(text);
         SDL_FreeSurface(text_surf);
+         text=NULL;
+         text_surf=NULL;
     }
     SDL_RenderPresent( renderer );
+    
+    if(intro_played==false) {
+        Mix_PlayChannel( -1, intro, 0 );
+        intro_played=true;
+    }
 
     return true;
 }
@@ -173,6 +185,12 @@ bool init() {
         cout << "Error initializing SDL: " << SDL_GetError() << endl;
         return false;
     }
+    
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+                   {
+                       cout<< "SDL_mixer could not initialize! SDL_mixer Error: \n"<< Mix_GetError() ;
+                       return false;
+                   }
 
     if ( IMG_Init(IMG_INIT_PNG) < 0 ) {
         cout << "Error initializing SDL_image: " << IMG_GetError() << endl;
@@ -202,6 +220,20 @@ bool init() {
     font2 = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",40);
     if ( !font ) {
         cout << "Error loading font: " << TTF_GetError() << endl;
+        return false;
+    }
+    
+    menuchange = Mix_LoadWAV( "/Users/tanishq/Downloads/change-menu.wav" );
+    if( menuchange == NULL )
+    {
+        cout<< "Failed to load change menu sound effect! SDL_mixer Error: %s\n"<< Mix_GetError() <<endl;
+        return false;
+    }
+    
+    intro = Mix_LoadWAV( "/Users/tanishq/Downloads/pacman_beginning.wav" );
+    if( menuchange == NULL )
+    {
+        cout<< "Failed to load change menu sound effect! SDL_mixer Error: %s\n"<< Mix_GetError() <<endl;
         return false;
     }
 
