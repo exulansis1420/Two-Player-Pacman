@@ -1,50 +1,29 @@
 
-#include <iostream>
-#include <string>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
+#include "menu.hpp"
+#include "gameplay.hpp"
 
 using namespace std;
 
-bool init();
-void kill();
-bool loop();
-
-SDL_Window* window;
-SDL_Renderer* renderer;
-SDL_Texture *texture, *text;
-TTF_Font* font, *font2;
-Mix_Chunk *menuchange = NULL, *intro = NULL;
-string ee;
-
-int main(int argc, char** args) {
-
-    if ( !init() ) {
-        system("pause");
-        return 1;
-    }
+Menu::Menu() {
+    menuchange = NULL;
+    intro = NULL;
+    interim = NULL;
+    ax=0;
+    ay=0;
+    intro_played = false;
+    newwindow = "menu";
+    texture = NULL;
+    text=NULL;
     
-    
-    while ( loop() ) {
-        SDL_Delay(10);
-    }
-
-    kill();
-    return 0;
 }
-SDL_Event e;
-int ax=0,ay=0;
-bool intro_played = false;
-bool loop() {
+
+bool Menu::loop() {
 
     SDL_Rect dest;
 
     SDL_SetRenderDrawColor( renderer, 0,0,0,0);
     SDL_RenderClear( renderer );
-    
+
     SDL_Rect arrow_out;
     arrow_out.w=50;
     arrow_out.h=50;
@@ -65,6 +44,7 @@ bool loop() {
     SDL_QueryTexture(arrowSheet, NULL, NULL, &arrow_in.w, &arrow_in.h);
     arrow_in.h /= 2;
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
+ 
     while ( SDL_PollEvent( &e ) != 0 ) {
         
         if (e.type == SDL_QUIT) return false;
@@ -85,9 +65,16 @@ bool loop() {
             Mix_PlayChannel( -1, menuchange, 0 );
            
         }
+        
+        if (keys[SDL_SCANCODE_RETURN]){
+            newwindow="start";
+            return false;
+           
+        }
+        
     }
     
-
+    
     int totalFrames = 2;
     int delayPerFrame = 300;
     int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
@@ -176,11 +163,11 @@ bool loop() {
         Mix_PlayChannel( -1, intro, 0 );
         intro_played=true;
     }
-
+    
     return true;
 }
 
-bool init() {
+bool Menu::init() {
     if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) {
         cout << "Error initializing SDL: " << SDL_GetError() << endl;
         return false;
@@ -215,7 +202,6 @@ bool init() {
         return false;
     }
 
-    // Load font
     font = TTF_OpenFont("/Users/tanishq/Downloads/pac-font 2.ttf", 72);
     font2 = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",40);
     if ( !font ) {
@@ -236,24 +222,38 @@ bool init() {
         cout<< "Failed to load change menu sound effect! SDL_mixer Error: %s\n"<< Mix_GetError() <<endl;
         return false;
     }
+    
+    interim = Mix_LoadWAV( "/Users/tanishq/Downloads/pacman_intermission.wav" );
+    if( menuchange == NULL )
+    {
+        cout<< "Failed to load change menu sound effect! SDL_mixer Error: %s\n"<< Mix_GetError() <<endl;
+        return false;
+    }
 
-    // Start sending SDL_Texte events
     SDL_StartTextInput();
 
     return true;
 }
 
-void kill() {
+void Menu::kill() {
     SDL_StopTextInput();
 
     TTF_CloseFont( font );
     SDL_DestroyTexture( texture );
     texture = NULL;
+    
+    SDL_DestroyTexture( text );
+    text = NULL;
 
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
     window = NULL;
     renderer = NULL;
+    
+    menuchange = NULL;
+    intro = NULL;
+    interim = NULL;
+    
 
     TTF_Quit();
     IMG_Quit();
