@@ -1,6 +1,6 @@
 #include "pacman.hpp"
 
-PacMan::PacMan() : Entity(285,475,30,30)
+PacMan::PacMan() : Entity(285,470,30,30)
 {
     eatenDots = 0;
     dir = 0;
