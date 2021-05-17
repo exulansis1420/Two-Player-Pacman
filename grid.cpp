@@ -3,8 +3,94 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
-#include <thread>
+#include <vector>
+#include <algorithm>
 #include "cell.h"
+
+std::vector<int> populate(std::vector<int> maze, int rows, int cols, int p, int g)
+{
+    int pr = p/cols, pc = p%cols, gr = g/cols, gc = g%cols;
+    std::vector<int> maze2;
+    //all 0 cells need to be given value 6 - small coin or 7 - large coin, except near pens, range of 2
+    //Exactly 8 big coins need to be there
+    int numLC = 0;
+    int cr,cc;
+    for(int i=0; i< rows*cols; i++)
+    {
+        cr = i/cols;
+        cc = i%cols;
+        if (maze[i]!=0)
+            maze2.push_back(maze[i]);
+        if (maze[i]==0){
+            maze2.push_back(6);
+            if ((double) rand()/RAND_MAX < 0.03 && numLC < 8){
+                    maze2[i]==7;
+                    numLC++;
+            }
+            if ((((pc-cc)*(pc-cc)<9)&&(pr-cr)*(pr-cr)<16)||(((gc-cc)*(gc-cc)<9)&&(gr-cr)*(gr-cr)<16))
+                maze2[i]=0;
+        }
+    }
+    return maze2;
+}
+
+int chooseRandom(int dir)
+{
+    std::vector<int> directions;
+    int i=1;
+    while(dir>0){
+        std::cout<<dir<<std::endl;
+        if (dir%2==1)
+        {
+            directions.push_back(i);
+        }
+        i*=2;
+        dir/=2;
+    }
+    return directions.at(rand() % directions.size());
+}
+
+std::vector<int> reRemoveDeadEnds(std::vector<int> maze, int rows, int cols)
+{
+    int num_on,dir,cr,cc;
+    for(int i=0; i< rows*cols; i++)
+    {
+        cc = i%cols;
+        cr = i/cols;
+        num_on=0;
+        dir=0;
+        if (maze[i]==0&&cc%2==1&&cr%2==1){
+            dir+=(maze[i-1]==0)?0:1;
+            dir+=(maze[i+1]==0)?0:4;
+            dir+=(maze[i-cols]==0)?0:2;
+            dir+=(maze[i+cols]==0)?0:8;
+            num_on+=(maze[i-1]==0)?1:0;
+            num_on+=(maze[i+1]==0)?1:0;
+            num_on+=(maze[i-cols]==0)?1:0;
+            num_on+=(maze[i+cols]==0)?1:0;
+            if(num_on<2)
+            {
+                dir = chooseRandom(dir);
+                //std::cout<<"Choosing: "<<dir<<std::endl;
+                switch(dir){
+                case 1: maze[i-1]=0;
+                        //std::cout<<maze[i-1]<<std::endl;
+                        break;
+                case 2: maze[i-cols]=0;
+                        //std::cout<<maze[i-cols]<<std::endl;
+                        break;
+                case 4: maze[i+1]=0;
+                        //std::cout<<maze[i+1]<<std::endl;
+                        break;
+                case 8: maze[i+cols]=0;
+                        //std::cout<<maze[i+cols]<<std::endl;
+                        break;
+            }
+            }
+        }
+    }
+    return maze;
+}
 
 Grid::Grid() {
   this->width = 15;
@@ -39,7 +125,17 @@ std::vector<int> Grid::generateMaze() {
     }
   }
   removeDeadEnds();
-  return addThickness();
+  std::vector<int> maze = addThickness();
+  maze = reRemoveDeadEnds(maze,2*height+2,2*width+3);
+  int p, g;
+  std::vector<int>::iterator it;
+  it = std::find (maze.begin(), maze.end(), 4);
+  p = it - maze.begin();
+  it = std::find (maze.begin(), maze.end(), 5);
+  g = it - maze.begin();
+
+  maze = populate(maze, 2*height+2, 2*width+3,p,g);
+  return maze;
 }
 
 Cell *Grid::findNextCell() {
