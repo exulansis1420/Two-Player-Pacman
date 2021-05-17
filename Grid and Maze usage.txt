@@ -2,14 +2,18 @@ import "grid.h"
 import "cell.h"
 
 Grid g = Grid();
-g.generateMaze();
+vector<int> m = g.generateMaze();
+int maze[28][33];
+for(int i=0; i<28; i++){
+	for(int j=0; j<33; j++){
+		arr[i][j] = maze[33*i+j];
+	}
+}
 
-//Now you have maze stored in maze.text
-//0 denotes open, 1 denotes closed
-
-//To add P1 and P2 pens
-//Spawn points - Players {(21,25),(21,49)}
-
+//Now you have maze (28x33) stored in maze.text, as well as in maze[][]
+//0 denotes empty, 1 denotes wall
+//2 denotes ghost only wall, 3 denotes player only wall
+//4 denotes player spawn point, 5 denotes ghost spawn point
 
 To add - file that takes maze.txt and generates image of maze, populated with big coin and small coins
 
