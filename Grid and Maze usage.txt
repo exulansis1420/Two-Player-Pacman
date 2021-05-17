@@ -1,27 +1,15 @@
 import "grid.h"
 import "cell.h"
 
-
-int maze[43][73];
-std::vector<int> v;
-
 Grid g = Grid();
-v = g.generateMaze();
-for(int i=0; i<43; i++){
-	for(int j=0; j<73; j++){
-		arr[i][j] = v[73*i+j];
-	}
-}
-//Now you have maze in maze[][]
+g.generateMaze();
+
+//Now you have maze stored in maze.text
 //0 denotes open, 1 denotes closed
-//Spawn points - Ghosts {(1,1),(1,71),(41,1),(41,71)}
+
+//To add P1 and P2 pens
 //Spawn points - Players {(21,25),(21,49)}
 
-//Next thing to work upon - a function 
-//int direct(string ghostname, pair<int,int> pos)
-//	outputs 1/2/3/4 based on direction this ghost should take
-//	assumes that p1,p2 at pair<int,int> p1 and pair<int,int> p2
 
-//Also a function pathfinder - which stores pairwise all shortest path info
+To add - file that takes maze.txt and generates image of maze, populated with big coin and small coins
 
-//If you want to see the generated maze - uncomment in line 160-line 176 

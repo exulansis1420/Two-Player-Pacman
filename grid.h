@@ -22,11 +22,11 @@ class Grid {
   Cell *findCandidate();
   bool areClosed(Cell *a, Cell *b);
   void removeDeadEnds();
+  void addThickness();
 
  public:
   Grid();
-  std::vector<int> generateMaze();
-  std::vector<int> addThickness();
+  void generateMaze();
 };
 
 #endif
