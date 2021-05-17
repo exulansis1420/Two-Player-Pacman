@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "map.hpp"
 
 class PacMan
     : public Entity
@@ -13,11 +14,12 @@ private:
 
 public:
     PacMan();
-    void move(SDL_Event input, SDL_Rect &textureRect, int &animstartframe);
+    PacMan(std::pair<int,int> spawnPos);
+    void move(Map &m, SDL_Rect &textureRect, int &animstartframe);
     void stop();
     void eatDot();
     void spawn(SDL_Rect &textureRect);
-    void animate(SDL_Rect &textureRect, int direction, int &animstartframe);
+    void animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m);
     void eatPowerDot();
     int getDotsEaten();
     void setDead(bool d);
