@@ -17,4 +17,5 @@ for(int i=0; i<28; i++){
 //4 denotes player spawn point, 5 denotes ghost spawn point
 //6 denotes coin, 7 denotes big coins(max 8)
 
-To add - file that takes maze.txt and generates image of maze
+//added file that takes maze.txt and generates image of maze - notworking yet
+//need organization of tiles and work on grid - remove pen and other such problems
