@@ -21,7 +21,7 @@ void Grid::createCells() {
   }
 }
 
-void Grid::generateMaze() {
+std::vector<int> Grid::generateMaze() {
   while (true) {
     current->setVisited(true);
     Cell *next = findNextCell();
@@ -39,7 +39,7 @@ void Grid::generateMaze() {
     }
   }
   removeDeadEnds();
-  addThickness();
+  return addThickness();
 }
 
 Cell *Grid::findNextCell() {
@@ -109,10 +109,11 @@ int Grid::calculateIndex(int row, int column) {
     return column + row * width;
 }
 
-void Grid::addThickness(){
+std::vector<int> Grid::addThickness(){
     std::ofstream out;
     out.open("maze.txt");
-    int arr[27][31];
+    //I want to repeat 2 random cols and 1 random row
+    int arr[28][33];
     for(int i=0; i<2*height+1; i++){
         for(int j=0; j<2*width+1; j++){
             arr[i][j] = 1;
@@ -159,25 +160,93 @@ void Grid::addThickness(){
     arr[4*(height/3)+1][0] = 0;
     arr[2*(height/3)+1][2*width] = 0;
     arr[4*(height/3)+1][2*width] = 0;
+    //Pen generation
+    {
+        int sr = height-2, sc1 = 2*width/3 - 2, sc2 = 4*width/3;
+        arr[sr][sc1] = 1; arr[sr][sc2] = 1;
+        arr[sr][sc1+1] = 1; arr[sr][sc2+1] = 1;
+        arr[sr][sc1+2] = 1; arr[sr][sc2+2] = 1;
+        arr[sr+1][sc1] = 1; arr[sr+1][sc2] = 1;
+        arr[sr+1][sc1+1] = 0; arr[sr+1][sc2+1] = 0;
+        arr[sr+1][sc1+2] = 1; arr[sr+1][sc2+2] = 1;
+        arr[sr+2][sc1] = 2; arr[sr+2][sc2] = 1;
+        arr[sr+2][sc1+1] = 4; arr[sr+2][sc2+1] = 5;
+        arr[sr+2][sc1+2] = 1; arr[sr+2][sc2+2] = 3;
+        arr[sr+3][sc1] = 1; arr[sr+3][sc2] = 1;
+        arr[sr+3][sc1+1] = 0; arr[sr+3][sc2+1] = 0;
+        arr[sr+3][sc1+2] = 1; arr[sr+3][sc2+2] = 1;
+        arr[sr+4][sc1] = 1; arr[sr+4][sc2] = 1;
+        arr[sr+4][sc1+1] = 1; arr[sr+4][sc2+1] = 1;
+        arr[sr+4][sc1+2] = 1; arr[sr+4][sc2+2] = 1;
+    }
+    //I want to repeat 2 random cols and 1 random row
+    //should be of type even,even
+    int r,c1,c2;
+    r = 2*(rand()%height-2)+2;
+    c1 = 2*(rand()%height-2)+2;
+    c2 = 2*(rand()%height-2)+2;
+    for(int i = 0; i<2*width+1; i++)
+    {
+        arr[2*height+1][i] = arr[r][i];
+        if (arr[2*height+1][i]>1)
+            arr[2*height+1][i]=0;
+    }
+    //bubble up
+    for(int i = 2*height+1; i>r;i--)
+    {
+        for(int j = 0; j<2*width+1; j++)
+        {
+            std::swap(arr[i][j],arr[i-1][j]) ;
+        }
+    }
+    //create columns
+    for(int i = 0; i<2*height+2; i++)
+    {
+        arr[i][2*width+1] = arr[i][c1];
+        arr[i][2*width+2] = arr[i][c2];
+        if (arr[i][2*width+1]>1)
+            arr[i][2*width+1]=0;
+        if (arr[i][2*width+2]>1)
+            arr[i][2*width+2]=0;
+    }
+    if(c2<c1)
+    {
+        for(int i = 0; i<2*height+2; i++)
+        {
+            std::swap(arr[i][2*width+1],arr[i][2*width+2]) ;
+        }
+        std::swap(c2,c1);
+    }
+    //bubble left
+    for(int i = 2*width+1; i>c1;i--)
+    {
+        for(int j = 0; j<2*height+2; j++)
+        {
+            std::swap(arr[j][i],arr[j][i-1]) ;
+        }
+    }
+    c2++;
+    for(int i = 2*width+2; i>c2;i--)
+    {
+        for(int j = 0; j<2*height+2; j++)
+        {
+            std::swap(arr[j][i],arr[j][i-1]) ;
+        }
+    }
     //print test
-    for(int i=0; i<2*height+1; i++){
-        for(int j=0; j<width*2+1; j++){
-            /*if(i==1&&(j==1||j==width*2-1)){
-                std::cout<<"G ";
-            }
-            else if(i==height*2-1&&(j==1||j==width*2-1)){
-                std::cout<<"G ";
-            }
-            else if(i==(height+1-(height%2))&&(j==2*(width/3)+1||j==4*(width/3)+1)){
-                std::cout<<"P ";
-            }
-            else*/
-            if(arr[i][j]==0)
-                out<<"  ";
-            else out<<"O ";
+    for(int i=0; i<2*height+2; i++){
+        for(int j=0; j<width*2+3; j++){
+            out<<arr[i][j];
         }
         out<<std::endl;
     }
+    std::vector<int> result;
+    for(int i=0; i<2*height+2; i++){
+        for(int j=0; j<width*2+3; j++){
+            result.push_back(arr[i][j]);
+        }
+    }
+    return result;
 }
 
 
