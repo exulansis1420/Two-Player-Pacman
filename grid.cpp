@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include "cell.h"
 
 Grid::Grid() {
-  this->width = 36;
-  this->height = 21;
+  this->width = 15;
+  this->height = 13;
   createCells();
   current = &cells[0];
 }
@@ -20,7 +21,7 @@ void Grid::createCells() {
   }
 }
 
-std::vector<int> Grid::generateMaze() {
+void Grid::generateMaze() {
   while (true) {
     current->setVisited(true);
     Cell *next = findNextCell();
@@ -38,7 +39,7 @@ std::vector<int> Grid::generateMaze() {
     }
   }
   removeDeadEnds();
-  return addThickness();
+  addThickness();
 }
 
 Cell *Grid::findNextCell() {
@@ -108,17 +109,19 @@ int Grid::calculateIndex(int row, int column) {
     return column + row * width;
 }
 
-std::vector<int> Grid::addThickness(){
-    int arr[43][73];
-    for(int i=0; i<43; i++){
-        for(int j=0; j<73; j++){
+void Grid::addThickness(){
+    std::ofstream out;
+    out.open("maze.txt");
+    int arr[27][31];
+    for(int i=0; i<2*height+1; i++){
+        for(int j=0; j<2*width+1; j++){
             arr[i][j] = 1;
         }
     }
-    for(int i=0; i<21; i++){
-        for(int j=0; j<36; j++){
+    for(int i=0; i<height; i++){
+        for(int j=0; j<width; j++){
             arr[2*i+1][2*j+1] = 0;
-            int wall = (&cells[36*i+j])->getWalls();
+            int wall = (&cells[width*i+j])->getWalls();
             if (wall <8)
                 arr[2*i+1][2*j+2] = 0;
             if ((wall != 12) && ((wall<4)||(wall>7)))
@@ -130,57 +133,51 @@ std::vector<int> Grid::addThickness(){
     {
         for (int i = 0; i<10; i++)
         {
-            er = 2*(rand()%21);
-            oddr = 2*(rand()%21)+1;
-            ec = 2*(rand()%36);
-            oc = 2*(rand()%36)+1;
+            er = 2*(rand()%height);
+            oddr = 2*(rand()%height)+1;
+            ec = 2*(rand()%width);
+            oc = 2*(rand()%width)+1;
             arr[er][oc] = 0;
             arr[oddr][ec] = 0;
         }
         int sum=0;
-        for(int i=0; i<43; i++){
-            for(int j=0; j<73; j++){
+        for(int i=0; i<2*height+1; i++){
+            for(int j=0; j<2*width+1; j++){
                 sum+=arr[i][j];
             }
         }
-        if((double)sum/3139.00 <0.42)
+        if((double)sum/(double)((2*width+1)*(2*height+1)) <0.42)
             break;
     }
     //rejoin borders
-    for(int i=0; i<73; i++)
+    for(int i=0; i<width*2+1; i++)
         arr[0][i]=1;
-    for(int i=0; i<43; i++)
+    for(int i=0; i<2*height+1; i++)
         arr[i][0]=1;
     //add the two tunnels
-    arr[15][0] = 0;
-    arr[29][0] = 0;
-    arr[15][72] = 0;
-    arr[29][72] = 0;
+    arr[2*(height/3)+1][0] = 0;
+    arr[4*(height/3)+1][0] = 0;
+    arr[2*(height/3)+1][2*width] = 0;
+    arr[4*(height/3)+1][2*width] = 0;
     //print test
-    /*for(int i=0; i<43; i++){
-        for(int j=0; j<73; j++){
-            if(i==1&&(j==1||j==71)){
+    for(int i=0; i<2*height+1; i++){
+        for(int j=0; j<width*2+1; j++){
+            /*if(i==1&&(j==1||j==width*2-1)){
                 std::cout<<"G ";
             }
-            else if(i==41&&(j==1||j==71)){
+            else if(i==height*2-1&&(j==1||j==width*2-1)){
                 std::cout<<"G ";
             }
-            else if(i==21&&(j==25||j==49)){
+            else if(i==(height+1-(height%2))&&(j==2*(width/3)+1||j==4*(width/3)+1)){
                 std::cout<<"P ";
             }
-            else if(arr[i][j]==0)
-                std::cout<<"  ";
-            else std::cout<<"O ";
+            else*/
+            if(arr[i][j]==0)
+                out<<"  ";
+            else out<<"O ";
         }
-        std::cout<<std::endl;
-    }*/
-    std::vector<int> result;
-    for(int i=0; i<43; i++){
-        for(int j=0; j<73; j++){
-            result.push_back(arr[i][j]);
-        }
+        out<<std::endl;
     }
-    return result;
 }
 
 
