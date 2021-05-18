@@ -14,6 +14,7 @@ protected:
     SDL_Rect entRect;
 
 public:
+    Entity();
     Entity(float x,float y,float w, float h);
 
     float getScreenPosX();

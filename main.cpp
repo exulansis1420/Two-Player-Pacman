@@ -3,8 +3,13 @@
 #include "menu.hpp"
 #include "gameplay.hpp"
 
+
+
 int main(int argc, char** args)
 {
+   // int maze[43][73];
+      
+    
     Menu M;
     if ( !M.init() ) {
         system("pause");
@@ -18,7 +23,7 @@ int main(int argc, char** args)
 
     M.kill();
     
-    while(M.newwindow!="exit") {
+    
         if(M.newwindow=="start") {
             Gameplay G;
             G.init();
@@ -33,9 +38,7 @@ int main(int argc, char** args)
         else if(M.newwindow=="about") {
 
         }
-    }
-    
-   
+     
     
     return 0;
 }

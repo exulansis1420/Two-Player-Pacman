@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include "pacman.hpp"
+#include "map.hpp"
 
 class Gameplay
 {
@@ -13,10 +14,10 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Event input;
-    SDL_Texture *text;
     TTF_Font *font3, *font4;
     bool quit;
     SDL_Texture* BG, *PM;
+    Map m;
     PacMan pacman;
     SDL_Texture* spriteSheet;
     SDL_Surface* temp2, *temp3;
