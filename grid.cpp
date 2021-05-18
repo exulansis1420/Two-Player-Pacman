@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include "cell.h"
+#include "mazeimage.h"
 
 std::vector<int> populate(std::vector<int> maze, int rows, int cols, int p, int g)
 {
@@ -23,7 +24,7 @@ std::vector<int> populate(std::vector<int> maze, int rows, int cols, int p, int 
             maze2.push_back(maze[i]);
         if (maze[i]==0){
             maze2.push_back(6);
-            if ((double) rand()/RAND_MAX < 0.02 && numLC < 8){
+            if ((double) rand()/RAND_MAX < 0.03 && numLC < 6){
                     maze2[i]=7;
                     numLC++;
             }
@@ -50,7 +51,7 @@ int chooseRandom(int dir)
     return directions.at(rand() % directions.size());
 }
 
-std::vector<int> reRemoveDeadEnds(std::vector<int> maze, int rows, int cols, int p, int g)
+/*std::vector<int> reRemoveDeadEnds(std::vector<int> maze, int rows, int cols, int p, int g)
 {
     int num_on,dir,cr,cc;
     for(int i=0; i< rows*cols; i++)
@@ -90,11 +91,11 @@ std::vector<int> reRemoveDeadEnds(std::vector<int> maze, int rows, int cols, int
         }
     }
     return maze;
-}
+}*/
 
 Grid::Grid() {
-  this->width = 15;
-  this->height = 13;
+  this->width = 9;
+  this->height = 10;
   createCells();
   current = &cells[0];
 }
@@ -127,15 +128,16 @@ std::vector<int> Grid::generateMaze() {
   removeDeadEnds();
   std::vector<int> maze = addThickness();
 
+  int r = saveMap(maze);
+
   int p, g;
   std::vector<int>::iterator it;
   it = std::find (maze.begin(), maze.end(), 4);
   p = it - maze.begin();
   it = std::find (maze.begin(), maze.end(), 5);
   g = it - maze.begin();
-
-  maze = reRemoveDeadEnds(maze,2*height+2,2*width+3,p,g);
-  maze = populate(maze, 2*height+2, 2*width+3,p,g);
+  //maze = reRemoveDeadEnds(maze,2*height+2,2*width+3,p,g);
+  maze = populate(maze, 2*height+1, 2*width+1,p,g);
   return maze;
 }
 
@@ -209,8 +211,8 @@ int Grid::calculateIndex(int row, int column) {
 std::vector<int> Grid::addThickness(){
     std::ofstream out;
     out.open("maze.txt");
-    //I want to repeat 2 random cols and 1 random row
-    int arr[28][33];
+    //I want to repeat 2 random cols and 1 random row -NOPE!
+    int arr[21][19];
     for(int i=0; i<2*height+1; i++){
         for(int j=0; j<2*width+1; j++){
             arr[i][j] = 1;
@@ -226,7 +228,7 @@ std::vector<int> Grid::addThickness(){
                 arr[2*i+2][2*j+1] = 0;
         }
     }
-    int er, oddr, ec, oc;
+    /*int er, oddr, ec, oc;
     while(true)
     {
         for (int i = 0; i<10; i++)
@@ -244,39 +246,48 @@ std::vector<int> Grid::addThickness(){
                 sum+=arr[i][j];
             }
         }
-        if((double)sum/(double)((2*width+1)*(2*height+1)) <0.42)
+        if((double)sum/(double)((2*width+1)*(2*height+1)) <0.46)
             break;
-    }
-    //rejoin borders
+    }*/
+    /*//rejoin borders
     for(int i=0; i<width*2+1; i++)
         arr[0][i]=1;
     for(int i=0; i<2*height+1; i++)
-        arr[i][0]=1;
+        arr[i][0]=1;*/
     //add the two tunnels
-    arr[2*(height/3)+1][0] = 0;
-    arr[4*(height/3)+1][0] = 0;
-    arr[2*(height/3)+1][2*width] = 0;
-    arr[4*(height/3)+1][2*width] = 0;
+    arr[7][0] = 0;
+    arr[15][0] = 0;
+    arr[7][2*width] = 0;
+    arr[15][2*width] = 0;
+    //create spawn points -
+    arr[11][7]=2;//P
+    arr[11][13]=3;//G
     //Pen generation
-    {
-        int sr = height-2, sc1 = 2*width/3 - 2, sc2 = 4*width/3;
+    /*{
+        int sr = height-3, sc1 = 2*width/3 - 2, sc2 = 4*width/3;
         arr[sr][sc1] = 1; arr[sr][sc2] = 1;
         arr[sr][sc1+1] = 1; arr[sr][sc2+1] = 1;
         arr[sr][sc1+2] = 1; arr[sr][sc2+2] = 1;
         arr[sr+1][sc1] = 1; arr[sr+1][sc2] = 1;
         arr[sr+1][sc1+1] = 0; arr[sr+1][sc2+1] = 0;
         arr[sr+1][sc1+2] = 1; arr[sr+1][sc2+2] = 1;
-        arr[sr+2][sc1] = 2; arr[sr+2][sc2] = 1;
-        arr[sr+2][sc1+1] = 4; arr[sr+2][sc2+1] = 5;
-        arr[sr+2][sc1+2] = 1; arr[sr+2][sc2+2] = 3;
-        arr[sr+3][sc1] = 1; arr[sr+3][sc2] = 1;
-        arr[sr+3][sc1+1] = 0; arr[sr+3][sc2+1] = 0;
-        arr[sr+3][sc1+2] = 1; arr[sr+3][sc2+2] = 1;
+        arr[sr+2][sc1] = 1; arr[sr+2][sc2] = 1;
+        arr[sr+2][sc1+1] = 0; arr[sr+2][sc2+1] = 0;
+        arr[sr+2][sc1+2] = 1; arr[sr+2][sc2+2] = 1;
+        arr[sr+3][sc1] = 2; arr[sr+3][sc2] = 1;
+        arr[sr+3][sc1+1] = 4; arr[sr+3][sc2+1] = 5;
+        arr[sr+3][sc1+2] = 1; arr[sr+3][sc2+2] = 3;
         arr[sr+4][sc1] = 1; arr[sr+4][sc2] = 1;
-        arr[sr+4][sc1+1] = 1; arr[sr+4][sc2+1] = 1;
+        arr[sr+4][sc1+1] = 0; arr[sr+4][sc2+1] = 0;
         arr[sr+4][sc1+2] = 1; arr[sr+4][sc2+2] = 1;
-    }
-    //I want to repeat 2 random cols and 1 random row
+        arr[sr+5][sc1] = 1; arr[sr+5][sc2] = 1;
+        arr[sr+5][sc1+1] = 0; arr[sr+5][sc2+1] = 0;
+        arr[sr+5][sc1+2] = 1; arr[sr+5][sc2+2] = 1;
+        arr[sr+6][sc1] = 1; arr[sr+6][sc2] = 1;
+        arr[sr+6][sc1+1] = 1; arr[sr+6][sc2+1] = 1;
+        arr[sr+6][sc1+2] = 1; arr[sr+6][sc2+2] = 1;
+    }*/
+    /*//I want to repeat 2 random cols and 1 random row
     //should be of type even,even
     int r,c1,c2;
     r = 2*(rand()%height-2)+2;
@@ -329,17 +340,17 @@ std::vector<int> Grid::addThickness(){
         {
             std::swap(arr[j][i],arr[j][i-1]) ;
         }
-    }
+    }*/
     //print test
-    for(int i=0; i<2*height+2; i++){
-        for(int j=0; j<width*2+3; j++){
+    for(int i=0; i<2*height+1; i++){
+        for(int j=0; j<width*2+1; j++){
             out<<arr[i][j];
         }
         out<<std::endl;
     }
     std::vector<int> result;
-    for(int i=0; i<2*height+2; i++){
-        for(int j=0; j<width*2+3; j++){
+    for(int i=0; i<2*height+1; i++){
+        for(int j=0; j<width*2+1; j++){
             result.push_back(arr[i][j]);
         }
     }

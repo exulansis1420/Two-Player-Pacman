@@ -1,6 +1,9 @@
 #ifndef MAZEIMAGE_H
 #define MAZEIMAGE_H
 
-int display();
+#include <stdio.h>
+#include <vector>
+
+int saveMap(std::vector<int> maze);
 
 #endif

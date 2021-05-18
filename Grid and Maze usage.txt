@@ -13,9 +13,8 @@ for(int i=0; i<28; i++){
 //Now you have maze (28x33) stored in maze.text, as well as in maze[][]
 //Now maze.text has only the map, while maze[][] array is populated with coins
 //0 denotes empty, 1 denotes wall
-//2 denotes ghost only wall, 3 denotes player only wall
-//4 denotes player spawn point, 5 denotes ghost spawn point
-//6 denotes coin, 7 denotes big coins(max 8)
+//2 denotes P, 3 denotes G
+//6 denotes coin, 7 denotes big coins(max 6)
 
-//added file that takes maze.txt and generates image of maze - notworking yet
-//need organization of tiles and work on grid - remove pen and other such problems
+//added file that takes maze.txt and generates image of maze
+//need to save that as map.png - issue

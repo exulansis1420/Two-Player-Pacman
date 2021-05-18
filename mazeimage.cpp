@@ -4,13 +4,26 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <vector>
+#include <iostream>
 #include <stdlib.h>
 #include <string>
 #include <fstream>
 
 //Screen dimension constants
-const int SCREEN_WIDTH =  800;
-const int SCREEN_HEIGHT = 700;
+const int SCREEN_WIDTH = 665;
+const int SCREEN_HEIGHT = 735;
+
+void save_texture(const char* file_name, SDL_Renderer* renderer, SDL_Texture* texture) {
+    SDL_Texture* target = SDL_GetRenderTarget(renderer);
+    SDL_SetRenderTarget(renderer, texture);
+    int width, height;
+    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+    SDL_RenderReadPixels(renderer, NULL, surface->format->format, surface->pixels, surface->pitch);
+    IMG_SavePNG(surface, file_name);
+    SDL_FreeSurface(surface);
+    SDL_SetRenderTarget(renderer, target);
+}
 
 //Texture wrapper class
 class LTexture
@@ -29,6 +42,7 @@ class LTexture
 		//Gets image dimensions
 		int getWidth();
 		int getHeight();
+		SDL_Texture* getTexture();
 	private:
 		//The actual hardware texture
 		SDL_Texture* mTexture;
@@ -53,7 +67,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 //Scene sprites
-SDL_Rect gSpriteClips[48];
+SDL_Rect gSpriteClips[17];
 LTexture gSpriteSheetTexture;
 
 LTexture::LTexture()
@@ -69,11 +83,56 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
+int boundary(std::vector<int> maze, int i)
+{
+    int cols = 19, rows=21;
+    int r = i/cols, c = i%cols;
+    //start clockwise from tl
+    int b = 0;
+    if(r>0&&maze[i-cols]==1)
+        b+=2;
+    else
+        b+=1;
+    b*=10;
+    if(c<cols-1&&maze[i+1]==1)
+        b+=2;
+    else
+        b+=1;
+    b*=10;
+    if(r<rows-1&&maze[i+cols]==1)
+        b+=2;
+    else
+        b+=1;
+    b*=10;
+    if(c>0&&maze[i-1]==1)
+        b+=2;
+    else
+        b+=1;
+    return b;
+}
 
 int tileType (std::vector<int> maze, int i)
 {
+    int k = boundary( maze, i);
     if(maze[i]==1){
-        return 6;
+        switch(k){
+            case 1111 : return 1; break;
+            case 1112 : return 2; break;
+            case 1121 : return 3; break;
+            case 1122 : return 4; break;
+            case 1211 : return 5; break;
+            case 1212 : return 6; break;
+            case 1221 : return 7; break;
+            case 1222 : return 8; break;
+            case 2111 : return 9; break;
+            case 2112 : return 10; break;
+            case 2121 : return 11; break;
+            case 2122 : return 12; break;
+            case 2211 : return 13; break;
+            case 2212 : return 14; break;
+            case 2221 : return 15; break;
+            case 2222 : return 16; break;
+        }
     }
     else{
         return 0;
@@ -144,6 +203,11 @@ int LTexture::getHeight()
 	return mHeight;
 }
 
+SDL_Texture* LTexture::getTexture()
+{
+    return mTexture;
+}
+
 bool init()
 {
 	//Initialization flag
@@ -196,11 +260,11 @@ bool loadMedia()
 		success = false;
 	}
 	else{
-        for(int i = 0; i<48;i++){
-            gSpriteClips[i].x = i*20;
+        for(int i = 0; i<17;i++){
+            gSpriteClips[i].x = i*35;
             gSpriteClips[i].y =    0;
-            gSpriteClips[i].w =   20;
-            gSpriteClips[i].h =   20;
+            gSpriteClips[i].w =   35;
+            gSpriteClips[i].h =   35;
         }
 	}
 	return success;
@@ -220,16 +284,16 @@ void close()
 	SDL_Quit();
 }
 
-int display()
+int saveMap(std::vector<int> maze)
 {
-    std::vector<int> maze;
-    std::ifstream fin;
-    fin.open("maze.txt");
-    char ch;
-    int a;
-    while (fin >> std::noskipws >> ch) {
-        maze.push_back((int)ch-'0');
-    }
+    /*for(int i=0; i<28; i++){
+        for(int j=0; j<33; j++){
+            if(maze[33*i+j]==0)
+                std::cout<<"  ";
+            else std::cout<<maze[33*i+j]<<" ";
+        }
+        std::cout<<std::endl;
+    }*/
 	//Start up SDL and create window
 	if( !init() )
 		printf( "Failed to initialize!\n" );
@@ -256,12 +320,15 @@ int display()
 				int r,c;
 				for(int i=0; i<maze.size(); i++)
                 {
-                    r = i/33; c = i % 33;
+                    r = i/19; c = i % 19;
                     gSpriteSheetTexture.render( gSpriteClips[0].w*c, gSpriteClips[1].h*r, &gSpriteClips[tileType(maze,i)] );
                 }
 				//Update screen
 				SDL_RenderPresent( gRenderer );
+				//save_texture("./map.png", gRenderer, gSpriteSheetTexture.getTexture());
 			}
+			//std::cout<<"Saving..."<<std::endl;
+			//save_texture("map.png", gRenderer, gSpriteSheetTexture.getTexture());
 		}
 	}
 
