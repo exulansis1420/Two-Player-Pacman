@@ -19,7 +19,7 @@ Ghost::Ghost(std::pair<int,int> spawnPos) : Entity()
     Entity::entRect.w = 30;
     Entity::entRect.h = 30;
 
-    eatenDots = 0;
+  
     dir = 0;
 }
 void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m) {
@@ -34,21 +34,21 @@ void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, M
         }
         else if(direction==2) {
             
-            animstartframe = 135;
+            animstartframe = 90;
         }
         else if(direction==3){
             
-            animstartframe = 90;
+            animstartframe = 60;
         }
         else{
 
-            animstartframe = 45;
+            animstartframe = 30;
         }
-        int totalFrames = 3;
+        int totalFrames = 2;
         int delayPerFrame = 100;
         
         int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
-        textureRect.y = 0;
+        textureRect.y = 15;
         textureRect.x = animstartframe + frame * textureRect.w;
 
     int currx = m.getPMpos().first;
@@ -69,6 +69,10 @@ void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, M
         if(check==1) {
             
         }
+        else if(screenPosX>590) {
+            Entity::screenPosX=0;
+            Entity::entRect.x=0;
+        }
         else {Entity::move(2,0);}
         curry = (Entity::screenPosX + Entity::width -10 ) /30;
         currx = (Entity::screenPosY + Entity::height/2 -10) /30;
@@ -77,6 +81,10 @@ void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, M
         check= m.maze[currx][curry];
         if(check==1) {
             
+        }
+        else if(screenPosX<0) {
+            Entity::screenPosX=590;
+            Entity::entRect.x=590;
         }
         else {Entity::move(-2,0);}
         curry = (Entity::screenPosX  -10) /30;
@@ -136,22 +144,5 @@ void Ghost::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
 
 
 
-void Ghost::eatDot()
-{
-    eatenDots++;
-}
 
-int Ghost::getDotsEaten()
-{
-    return eatenDots;
-}
 
-void Ghost::setDead(bool d)
-{
-    dead = d;
-}
-
-bool Ghost::isDead()
-{
-    return dead;
-}

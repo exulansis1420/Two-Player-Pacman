@@ -292,6 +292,10 @@ void Menu::kill() {
     SDL_FreeSurface(empty_surf);
     SDL_FreeSurface(temp);
     
+    Mix_FreeChunk( menuchange );
+    Mix_FreeChunk( interim ) ;
+    Mix_FreeChunk( intro );
+    
     
 
     SDL_DestroyRenderer( renderer );

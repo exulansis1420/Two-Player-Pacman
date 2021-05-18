@@ -1,5 +1,5 @@
 #include "gameplay.hpp"
-#include "mazeimage.h"
+
 
 using namespace std;
 
@@ -34,8 +34,17 @@ void Gameplay::loop() {
             if (input.type == SDL_QUIT) quit = true;
         }
         
-        pacman.move(m,textureRect,animstartframe);
+        if(character==0)
+        {
+            pacman.move(m,textureRect,animstartframe);
+
+            
+        }
+        else {
+            ghost.move(m,textureRect2,animstartframe);
+        }
         pacmanRect = pacman.getEntRect();
+        ghostRect = ghost.getEntRect();
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -45,7 +54,8 @@ void Gameplay::loop() {
         src.w=570;
         src.h=630;
         SDL_RenderCopy(renderer, BG, NULL, &src);
-          SDL_RenderCopy(renderer, spriteSheet, &textureRect, &pacmanRect);
+        SDL_RenderCopy(renderer, spriteSheet, &textureRect, &pacmanRect);
+        SDL_RenderCopy(renderer, spriteSheet, &textureRect2, &ghostRect);
         
         
         dest.x = 40;
@@ -103,13 +113,14 @@ void Gameplay::loop() {
     
 }
 
-void Gameplay::init() {
+void Gameplay::init(int c) {
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
     
     m.init();
-    saveMap(m.mvector);
+    
+    character =c;
     
     window = SDL_CreateWindow("Pacman 1.0", SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED, 590, 740, SDL_WINDOW_SHOWN);
@@ -121,10 +132,14 @@ void Gameplay::init() {
     BG = SDL_CreateTextureFromSurface(renderer, temp2);
     PM = SDL_CreateTextureFromSurface(renderer, temp3);
     
-    
+  
     pacman= PacMan(m.getPMspawn());
-    pacman.setimage(spriteSheet, textureRect, renderer);
+    pacman.setimage(spriteSheet, textureRect, renderer,0);
     pacmanRect = pacman.getEntRect();
+    
+    ghost= Ghost(m.getGspawn());
+    ghost.setimage(spriteSheet, textureRect2, renderer,1);
+    ghostRect = ghost.getEntRect();
 }
 
 void Gameplay::kill() {
