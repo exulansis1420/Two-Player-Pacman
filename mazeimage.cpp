@@ -10,19 +10,132 @@
 #include <fstream>
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 665;
-const int SCREEN_HEIGHT = 735;
+const int SCREEN_WIDTH = 570;
+const int SCREEN_HEIGHT = 630;
 
-void save_texture(const char* file_name, SDL_Renderer* renderer, SDL_Texture* texture) {
-    SDL_Texture* target = SDL_GetRenderTarget(renderer);
-    SDL_SetRenderTarget(renderer, texture);
-    int width, height;
-    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-    SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
-    SDL_RenderReadPixels(renderer, NULL, surface->format->format, surface->pixels, surface->pitch);
-    IMG_SavePNG(surface, file_name);
-    SDL_FreeSurface(surface);
-    SDL_SetRenderTarget(renderer, target);
+// Save screenshot
+// file: Filename for created screenshot
+// renderer: pointer to SDL_Renderer
+bool saveScreenshot(const std::string &file, SDL_Renderer *renderer ) {
+  // Used temporary variables
+  SDL_Rect _viewport;
+  SDL_Surface *_surface = NULL;
+
+  // Get viewport size
+  SDL_RenderGetViewport( renderer, &_viewport);
+
+  // Create SDL_Surface with depth of 32 bits
+  _surface = SDL_CreateRGBSurface( 0, _viewport.w, _viewport.h, 32, 0, 0, 0, 0 );
+
+  // Check if the surface is created properly
+  if ( _surface == NULL ) {
+    std::cout << "Cannot create SDL_Surface: " << SDL_GetError() << std::endl;
+    return false;
+   }
+
+  // Get data from SDL_Renderer and save them into surface
+  if ( SDL_RenderReadPixels( renderer, NULL, _surface->format->format, _surface->pixels, _surface->pitch ) != 0 ) {
+    std::cout << "Cannot read data from SDL_Renderer: " << SDL_GetError() << std::endl;
+
+    // Don't forget to free memory
+    SDL_FreeSurface(_surface);
+    return false;
+  }
+
+  // Save screenshot as PNG file
+  if ( IMG_SavePNG( _surface, file.c_str() ) != 0 ) {
+    std::cout << "Cannot save PNG file: " << SDL_GetError() << std::endl;
+
+    // Free memory
+    SDL_FreeSurface(_surface);
+    return false;
+  }
+
+  // Free memory
+  SDL_FreeSurface(_surface);
+  return true;
+}
+
+void save_texture(SDL_Renderer *ren, SDL_Texture *tex, const char *filename)
+{
+    SDL_Texture *ren_tex;
+    SDL_Surface *surf;
+    int st;
+    int w;
+    int h;
+    int format;
+    void *pixels;
+
+    pixels  = NULL;
+    surf    = NULL;
+    ren_tex = NULL;
+    format  = SDL_PIXELFORMAT_RGBA32;
+
+    /* Get information about texture we want to save */
+    st = SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+    if (st != 0) {
+        SDL_Log("Failed querying texture: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    ren_tex = SDL_CreateTexture(ren, format, SDL_TEXTUREACCESS_TARGET, w, h);
+    if (!ren_tex) {
+        SDL_Log("Failed creating render texture: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    /*
+     * Initialize our canvas, then copy texture to a target whose pixel data we
+     * can access
+     */
+    st = SDL_SetRenderTarget(ren, ren_tex);
+    if (st != 0) {
+        SDL_Log("Failed setting render target: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    SDL_SetRenderDrawColor(ren, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(ren);
+
+    st = SDL_RenderCopy(ren, tex, NULL, NULL);
+    if (st != 0) {
+        SDL_Log("Failed copying texture data: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    /* Create buffer to hold texture data and load it */
+    pixels = malloc(w * h * SDL_BYTESPERPIXEL(format));
+    if (!pixels) {
+        SDL_Log("Failed allocating memory\n");
+        goto cleanup;
+    }
+
+    st = SDL_RenderReadPixels(ren, NULL, format, pixels, w * SDL_BYTESPERPIXEL(format));
+    if (st != 0) {
+        SDL_Log("Failed reading pixel data: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    /* Copy pixel data over to surface */
+    surf = SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, SDL_BITSPERPIXEL(format), w * SDL_BYTESPERPIXEL(format), format);
+    if (!surf) {
+        SDL_Log("Failed creating new surface: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    /* Save result to an image */
+    st = SDL_SaveBMP(surf, filename);
+    if (st != 0) {
+        SDL_Log("Failed saving image: %s\n", SDL_GetError());
+        goto cleanup;
+    }
+
+    SDL_Log("Saved texture as BMP to \"%s\"\n", filename);
+
+cleanup:
+    SDL_FreeSurface(surf);
+    free(pixels);
+    SDL_DestroyTexture(ren_tex);
 }
 
 //Texture wrapper class
@@ -67,7 +180,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 //Scene sprites
-SDL_Rect gSpriteClips[17];
+SDL_Rect gSpriteClips[2];
 LTexture gSpriteSheetTexture;
 
 LTexture::LTexture()
@@ -115,24 +228,7 @@ int tileType (std::vector<int> maze, int i)
 {
     int k = boundary( maze, i);
     if(maze[i]==1){
-        switch(k){
-            case 1111 : return 1; break;
-            case 1112 : return 2; break;
-            case 1121 : return 3; break;
-            case 1122 : return 4; break;
-            case 1211 : return 5; break;
-            case 1212 : return 6; break;
-            case 1221 : return 7; break;
-            case 1222 : return 8; break;
-            case 2111 : return 9; break;
-            case 2112 : return 10; break;
-            case 2121 : return 11; break;
-            case 2122 : return 12; break;
-            case 2211 : return 13; break;
-            case 2212 : return 14; break;
-            case 2221 : return 15; break;
-            case 2222 : return 16; break;
-        }
+        return 1;
     }
     else{
         return 0;
@@ -223,7 +319,7 @@ bool init()
 			printf( "Warning: Linear texture filtering not enabled!" );
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "MAP", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL ){
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -255,16 +351,16 @@ bool loadMedia()
 	//Loading success flag
 	bool success = true;
 	//Load sprite sheet texture
-	if( !gSpriteSheetTexture.loadFromFile( "tiles/spritesheet2.png" ) ){
+	if( !gSpriteSheetTexture.loadFromFile( "tiles/spritesheet.png" ) ){
 		printf( "Failed to load sprite sheet texture!\n" );
 		success = false;
 	}
 	else{
-        for(int i = 0; i<17;i++){
-            gSpriteClips[i].x = i*35;
+        for(int i = 0; i<2;i++){
+            gSpriteClips[i].x = i*30;
             gSpriteClips[i].y =    0;
-            gSpriteClips[i].w =   35;
-            gSpriteClips[i].h =   35;
+            gSpriteClips[i].w =   30;
+            gSpriteClips[i].h =   30;
         }
 	}
 	return success;
@@ -325,10 +421,12 @@ int saveMap(std::vector<int> maze)
                 }
 				//Update screen
 				SDL_RenderPresent( gRenderer );
+				if(saveScreenshot("map.png", gRenderer ))
+                    break;
 				//save_texture("./map.png", gRenderer, gSpriteSheetTexture.getTexture());
 			}
 			//std::cout<<"Saving..."<<std::endl;
-			//save_texture("map.png", gRenderer, gSpriteSheetTexture.getTexture());
+
 		}
 	}
 

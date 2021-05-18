@@ -16,5 +16,5 @@ for(int i=0; i<28; i++){
 //2 denotes P, 3 denotes G
 //6 denotes coin, 7 denotes big coins(max 6)
 
-//added file that takes maze.txt and generates image of maze
-//need to save that as map.png - issue
+//also generates image of maze and saves as maze.png
+
