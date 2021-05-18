@@ -3,7 +3,7 @@
 #include "Entity.hpp"
 #include "map.hpp"
 
-class PacMan
+class Ghost
     : public Entity
 {
 private:
@@ -13,8 +13,8 @@ private:
     
 
 public:
-    PacMan();
-    PacMan(std::pair<int,int> spawnPos);
+    Ghost();
+    Ghost(std::pair<int,int> spawnPos);
     void move(Map &m, SDL_Rect &textureRect, int &animstartframe);
     void stop(int dir, SDL_Rect &textureRect, Map &m);
     void eatDot();
@@ -25,3 +25,4 @@ public:
     void setDead(bool d);
     bool isDead();
 };
+

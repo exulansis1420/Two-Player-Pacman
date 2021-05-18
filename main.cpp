@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "menu.hpp"
 #include "gameplay.hpp"
+#include "help.hpp"
 
 
 
@@ -32,7 +33,10 @@ int main(int argc, char** args)
         }
         
         else if(M.newwindow=="help") {
-           
+            Help H;
+            H.init();
+            H.loop();
+            H.kill();
         }
         
         else if(M.newwindow=="about") {

@@ -1,11 +1,11 @@
-#include "pacman.hpp"
+#include "ghost.hpp"
 #include<iostream>
 
-PacMan::PacMan() : Entity() {
+Ghost::Ghost() : Entity() {
     //
 }
 
-PacMan::PacMan(std::pair<int,int> spawnPos) : Entity()
+Ghost::Ghost(std::pair<int,int> spawnPos) : Entity()
 {
     Entity::tileX = spawnPos.second;
     Entity::tileY = spawnPos.first;
@@ -22,7 +22,7 @@ PacMan::PacMan(std::pair<int,int> spawnPos) : Entity()
     eatenDots = 0;
     dir = 0;
 }
-void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m) {
+void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m) {
     //0 = DEFAULT //1 = UP, 2 = RIGHT, 3 = LEFT, 4 = DOWN
    
         if(direction ==0) {
@@ -99,7 +99,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         //screenPosY.;
 }
 
-void PacMan::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
+void Ghost::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
 {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
@@ -135,22 +135,23 @@ void PacMan::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
 }
 
 
-void PacMan::eatDot()
+
+void Ghost::eatDot()
 {
     eatenDots++;
 }
 
-int PacMan::getDotsEaten()
+int Ghost::getDotsEaten()
 {
     return eatenDots;
 }
 
-void PacMan::setDead(bool d)
+void Ghost::setDead(bool d)
 {
     dead = d;
 }
 
-bool PacMan::isDead()
+bool Ghost::isDead()
 {
     return dead;
 }

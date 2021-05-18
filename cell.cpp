@@ -4,7 +4,7 @@
 
 const int UP = 1, LEFT = 2, DOWN = 4, RIGHT = 8;
 
-Cell::Cell(int row = 0, int column = 0) {
+Cell::Cell(int row , int column ) {
   this->row = row;
   this->column = column;
   visited = false;
