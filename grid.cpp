@@ -8,9 +8,8 @@
 #include "cell.h"
 #include "mazeimage.h"
 
-std::vector<int> populate(std::vector<int> maze, int rows, int cols, int p, int g)
+std::vector<int> populate(std::vector<int> maze, int rows, int cols)
 {
-    int pr = p/cols, pc = p%cols, gr = g/cols, gc = g%cols;
     std::vector<int> maze2;
     //all 0 cells need to be given value 6 - small coin or 7 - large coin, except near pens, range of 2
     //Exactly 8 big coins need to be there
@@ -28,8 +27,6 @@ std::vector<int> populate(std::vector<int> maze, int rows, int cols, int p, int 
                     maze2[i]=7;
                     numLC++;
             }
-            if ((((pc-cc)*(pc-cc)<9)&&(pr-cr)*(pr-cr)<16)||(((gc-cc)*(gc-cc)<9)&&(gr-cr)*(gr-cr)<16))
-                maze2[i]=0;
         }
     }
     return maze2;
@@ -129,15 +126,8 @@ std::vector<int> Grid::generateMaze() {
   std::vector<int> maze = addThickness();
 
   int r = saveMap(maze);
-
-  int p, g;
-  std::vector<int>::iterator it;
-  it = std::find (maze.begin(), maze.end(), 4);
-  p = it - maze.begin();
-  it = std::find (maze.begin(), maze.end(), 5);
-  g = it - maze.begin();
   //maze = reRemoveDeadEnds(maze,2*height+2,2*width+3,p,g);
-  maze = populate(maze, 2*height+1, 2*width+1,p,g);
+  maze = populate(maze, 2*height+1, 2*width+1);
   return maze;
 }
 
