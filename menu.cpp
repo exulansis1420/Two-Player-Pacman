@@ -17,6 +17,8 @@ Menu::Menu() {
     
 }
 
+
+
 bool Menu::loop() {
 
     SDL_Rect dest;
@@ -31,18 +33,15 @@ bool Menu::loop() {
     int arrow_x[3] = {135,145,135};
     int arrow_y[3] = {200,300,400};
     
-    
-    
-    SDL_Texture* arrowSheet = NULL;
-    SDL_Surface* temp = IMG_Load("/Users/tanishq/Downloads/arrow.png");
-    arrowSheet = SDL_CreateTextureFromSurface(renderer, temp);
-    SDL_FreeSurface(temp);
-    
+    SDL_Color clr1=white, clr2=white, clr3=white;
+ 
+
     SDL_Rect arrow_in;
     arrow_in.x = 0;
     arrow_in.y = 0;
     SDL_QueryTexture(arrowSheet, NULL, NULL, &arrow_in.w, &arrow_in.h);
     arrow_in.h /= 2;
+    
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
  
     while ( SDL_PollEvent( &e ) != 0 ) {
@@ -91,10 +90,6 @@ bool Menu::loop() {
 
     SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-    SDL_Color yellow = {255,231,55  };
-    SDL_Color white = {255,255,255};
-    SDL_Color red = {255,0,0};
-    SDL_Color clr1=white,clr2=white,clr3=white;
     
     if(ax==0) {
         clr1=red;
@@ -112,52 +107,58 @@ bool Menu::loop() {
         clr3=red;
     }
 
-     {
-        SDL_Surface* text_surf = TTF_RenderText_Solid(font, "pacman", yellow);
-        text = SDL_CreateTextureFromSurface(renderer, text_surf);
-
-        dest.x = 300 - (text_surf->w / 2.0f);
+        dest.x = 300 - (pacman_surf->w / 2.0f);
         dest.y = 70;
-        dest.w = text_surf->w;
-        dest.h = text_surf->h;
-        SDL_RenderCopy(renderer, text, NULL, &dest);
+        dest.w = pacman_surf->w;
+        dest.h = pacman_surf->h;
+        SDL_RenderCopy(renderer, pacman_text, NULL, &dest);
          
-        
-        text_surf = TTF_RenderText_Solid(font2, "start", clr1);
-         text = SDL_CreateTextureFromSurface(renderer, text_surf);
-         dest.x = 300 - (text_surf->w / 2.0f);
+         dest.x = 300 - (start_surf->w / 2.0f);
          dest.y = 200;
-         dest.w = text_surf->w;
-         dest.h = text_surf->h;
+         dest.w = start_surf->w;
+         dest.h = start_surf->h;
          
-         SDL_RenderCopy(renderer, text, NULL, &dest);
+         SDL_RenderCopy(renderer, start_text, NULL, &dest);
          
-        text_surf = TTF_RenderText_Solid(font2, "help", clr2);
-        text = SDL_CreateTextureFromSurface(renderer, text_surf);
-        dest.x = 300 - (text_surf->w / 2.0f);
+        dest.x = 300 - (help_surf->w / 2.0f);
         dest.y = 300;
-        dest.w = text_surf->w;
-        dest.h = text_surf->h;
+        dest.w = help_surf->w;
+        dest.h = help_surf->h;
+        SDL_RenderCopy(renderer, help_text, NULL, &dest);
          
-        SDL_RenderCopy(renderer, text, NULL, &dest);
-         
-        text_surf = TTF_RenderText_Solid(font2, "about", clr3);
-        text = SDL_CreateTextureFromSurface(renderer, text_surf);
-        dest.x = 300 - (text_surf->w / 2.0f);
+
+        dest.x = 300 - (about_surf->w / 2.0f);
         dest.y = 400;
-        dest.w = text_surf->w;
-        dest.h = text_surf->h;
+        dest.w = about_surf->w;
+        dest.h = about_surf->h;
         
-        SDL_RenderCopy(renderer, text, NULL, &dest);
+        SDL_RenderCopy(renderer, about_text, NULL, &dest);
          
+         if(frame%2==1) {
+             
+             dest.x = 300 - (continue_surf->w / 2.0f);
+             dest.y = 500;
+             dest.w = continue_surf->w;
+             dest.h = continue_surf->h;
+              
+             SDL_RenderCopy(renderer, continue_text, NULL, &dest);
+             
+         }
+         else {
+             
+             dest.x = 300 - (empty_surf->w / 2.0f);
+             dest.y = 500;
+             dest.w = empty_surf->w;
+             dest.h = empty_surf->h;
+              
+             SDL_RenderCopy(renderer, empty_text, NULL, &dest);
+             
+         }
+
+
         SDL_RenderCopy(renderer, arrowSheet, &arrow_in, &arrow_out);
 
-        SDL_DestroyTexture(text);
-        SDL_FreeSurface(text_surf);
-         text=NULL;
-         text_surf=NULL;
-    }
-    SDL_RenderPresent( renderer );
+        SDL_RenderPresent( renderer );
     
     if(intro_played==false) {
         Mix_PlayChannel( -1, intro, 0 );
@@ -204,10 +205,36 @@ bool Menu::init() {
 
     font = TTF_OpenFont("/Users/tanishq/Downloads/pac-font 2.ttf", 72);
     font2 = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",40);
-    if ( !font ) {
-        cout << "Error loading font: " << TTF_GetError() << endl;
-        return false;
-    }
+    font2_small = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",20);
+
+    yellow = {255,231,55  };
+    white = {255,255,255};
+    red = {255,0,0};
+    
+    arrowSheet = NULL;
+    temp = IMG_Load("/Users/tanishq/Downloads/arrow.png");
+    arrowSheet = SDL_CreateTextureFromSurface(renderer, temp);
+
+
+    pacman_surf = TTF_RenderText_Solid(font, "pacman", yellow);
+    pacman_text = SDL_CreateTextureFromSurface(renderer, pacman_surf);
+
+    start_surf = TTF_RenderText_Solid(font2, "start", red);
+    start_text = SDL_CreateTextureFromSurface(renderer, start_surf);
+
+    help_surf = TTF_RenderText_Solid(font2, "help", red);
+    help_text = SDL_CreateTextureFromSurface(renderer, help_surf);
+
+    about_surf = TTF_RenderText_Solid(font2, "about", red);
+    about_text = SDL_CreateTextureFromSurface(renderer, about_surf);
+
+    continue_surf = TTF_RenderText_Solid(font2_small, "press enter to continue", {0,0,255});
+    continue_text = SDL_CreateTextureFromSurface(renderer, continue_surf);
+
+    empty_surf = TTF_RenderText_Solid(font2_small, " ", {0,0,255});
+    empty_text = SDL_CreateTextureFromSurface(renderer, empty_surf);
+    
+    
     
     menuchange = Mix_LoadWAV( "/Users/tanishq/Downloads/change-menu.wav" );
     if( menuchange == NULL )
@@ -242,8 +269,23 @@ void Menu::kill() {
     SDL_DestroyTexture( texture );
     texture = NULL;
     
-    SDL_DestroyTexture( text );
-    text = NULL;
+    SDL_DestroyTexture( pacman_text );
+    SDL_DestroyTexture( start_text );
+    SDL_DestroyTexture( continue_text );
+    SDL_DestroyTexture( empty_text );
+    SDL_DestroyTexture( help_text );
+    SDL_DestroyTexture( about_text );
+    SDL_DestroyTexture( arrowSheet );
+    
+    SDL_FreeSurface(pacman_surf);
+    SDL_FreeSurface(about_surf);
+    SDL_FreeSurface(help_surf);
+    SDL_FreeSurface(start_surf);
+    SDL_FreeSurface(continue_surf);
+    SDL_FreeSurface(empty_surf);
+    SDL_FreeSurface(temp);
+    
+    
 
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );

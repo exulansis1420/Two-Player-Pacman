@@ -2,11 +2,15 @@
 
 #include <cmath>
 
+Entity::Entity()
+{
+    //default constr
+}
 
 Entity::Entity(float x, float y, float w, float h)
 {
-//    tileX = tilePosX;
-//    tileY = tilePosY;
+    tileX = x/20;
+    tileY = y/20;
     screenPosX = x;
     screenPosY = y;
     width = w;
