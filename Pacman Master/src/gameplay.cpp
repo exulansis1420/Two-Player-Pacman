@@ -31,7 +31,7 @@ void Gameplay::loop() {
     
     SDL_Texture* newTexture = NULL;
     std::string path = "resources/Images/dotspritesheet.png";
-    SDL_Surface* loadedSurface = IMG_Load("/resources/Images/dotspritesheet.png");
+    SDL_Surface* loadedSurface = IMG_Load("resources/Images/dotspritesheet.png");
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     
     dotloadMedia();

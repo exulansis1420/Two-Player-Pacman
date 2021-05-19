@@ -20,7 +20,7 @@ PacMan::PacMan(std::pair<int,int> spawnPos) : Entity()
     Entity::entRect.h = 30;
     Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     Entity::intro = Mix_LoadWAV( "resources/Sounds/pacman_beginning.wav" );
-    Entity::dead = Mix_LoadWAV("resources/Souns/death_1.wav");
+    Entity::dead = Mix_LoadWAV("resources/Sounds/death_1.wav");
     Entity::munch = Mix_LoadWAV("resources/Sounds/munch_a.wav");
     Entity::fruit = Mix_LoadWAV("resources/Sounds/fruit.wav");
     Entity::eatghost = Mix_LoadWAV("resources/Sounds/ghost_eat_3.wav");
