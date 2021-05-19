@@ -8,29 +8,7 @@
 #include "cell.h"
 #include "mazeimage.h"
 
-std::vector<int> populate(std::vector<int> maze, int rows, int cols)
-{
-    std::vector<int> maze2;
-    //all 0 cells need to be given value 6 - small coin or 7 - large coin, except near pens, range of 2
-    //Exactly 8 big coins need to be there
-    int numLC = 0;
-    int cr,cc;
-    for(int i=0; i< rows*cols; i++)
-    {
-        cr = i/cols;
-        cc = i%cols;
-        if (maze[i]!=0)
-            maze2.push_back(maze[i]);
-        if (maze[i]==0){
-            maze2.push_back(6);
-            if ((double) rand()/RAND_MAX < 0.03 && numLC < 6){
-                    maze2[i]=7;
-                    numLC++;
-            }
-        }
-    }
-    return maze2;
-}
+
 
 int chooseRandom(int dir)
 {
@@ -125,8 +103,9 @@ std::vector<int> Grid::generateMaze() {
   removeDeadEnds();
   std::vector<int> maze = addThickness();
 
+  //int r = saveMap(maze);
   //maze = reRemoveDeadEnds(maze,2*height+2,2*width+3,p,g);
-  maze = populate(maze, 2*height+1, 2*width+1);
+  //maze = populate(maze, 2*height+1, 2*width+1);
   return maze;
 }
 
@@ -249,21 +228,99 @@ std::vector<int> Grid::addThickness(){
     arr[7][2*width] = 0;
     arr[15][2*width] = 0;
     //create spawn points -
-    arr[11][7]=2;//P
-    arr[11][13]=3;//G
-    
-    //print test
-    for(int i=0; i<2*height+1; i++){
-        for(int j=0; j<width*2+1; j++){
-            out<<arr[i][j];
-        }
-        out<<std::endl;
+    arr[11][5]=2;//P
+    arr[11][15]=3;//G
+    //Pen generation
+    /*{
+        int sr = height-3, sc1 = 2*width/3 - 2, sc2 = 4*width/3;
+        arr[sr][sc1] = 1; arr[sr][sc2] = 1;
+        arr[sr][sc1+1] = 1; arr[sr][sc2+1] = 1;
+        arr[sr][sc1+2] = 1; arr[sr][sc2+2] = 1;
+        arr[sr+1][sc1] = 1; arr[sr+1][sc2] = 1;
+        arr[sr+1][sc1+1] = 0; arr[sr+1][sc2+1] = 0;
+        arr[sr+1][sc1+2] = 1; arr[sr+1][sc2+2] = 1;
+        arr[sr+2][sc1] = 1; arr[sr+2][sc2] = 1;
+        arr[sr+2][sc1+1] = 0; arr[sr+2][sc2+1] = 0;
+        arr[sr+2][sc1+2] = 1; arr[sr+2][sc2+2] = 1;
+        arr[sr+3][sc1] = 2; arr[sr+3][sc2] = 1;
+        arr[sr+3][sc1+1] = 4; arr[sr+3][sc2+1] = 5;
+        arr[sr+3][sc1+2] = 1; arr[sr+3][sc2+2] = 3;
+        arr[sr+4][sc1] = 1; arr[sr+4][sc2] = 1;
+        arr[sr+4][sc1+1] = 0; arr[sr+4][sc2+1] = 0;
+        arr[sr+4][sc1+2] = 1; arr[sr+4][sc2+2] = 1;
+        arr[sr+5][sc1] = 1; arr[sr+5][sc2] = 1;
+        arr[sr+5][sc1+1] = 0; arr[sr+5][sc2+1] = 0;
+        arr[sr+5][sc1+2] = 1; arr[sr+5][sc2+2] = 1;
+        arr[sr+6][sc1] = 1; arr[sr+6][sc2] = 1;
+        arr[sr+6][sc1+1] = 1; arr[sr+6][sc2+1] = 1;
+        arr[sr+6][sc1+2] = 1; arr[sr+6][sc2+2] = 1;
+    }*/
+    /*//I want to repeat 2 random cols and 1 random row
+    //should be of type even,even
+    int r,c1,c2;
+    r = 2*(rand()%height-2)+2;
+    c1 = 2*(rand()%height-2)+2;
+    c2 = 2*(rand()%height-2)+2;
+    for(int i = 0; i<2*width+1; i++)
+    {
+        arr[2*height+1][i] = arr[r][i];
+        if (arr[2*height+1][i]>1)
+            arr[2*height+1][i]=0;
     }
+    //bubble up
+    for(int i = 2*height+1; i>r;i--)
+    {
+        for(int j = 0; j<2*width+1; j++)
+        {
+            std::swap(arr[i][j],arr[i-1][j]) ;
+        }
+    }
+    //create columns
+    for(int i = 0; i<2*height+2; i++)
+    {
+        arr[i][2*width+1] = arr[i][c1];
+        arr[i][2*width+2] = arr[i][c2];
+        if (arr[i][2*width+1]>1)
+            arr[i][2*width+1]=0;
+        if (arr[i][2*width+2]>1)
+            arr[i][2*width+2]=0;
+    }
+    if(c2<c1)
+    {
+        for(int i = 0; i<2*height+2; i++)
+        {
+            std::swap(arr[i][2*width+1],arr[i][2*width+2]) ;
+        }
+        std::swap(c2,c1);
+    }
+    //bubble left
+    for(int i = 2*width+1; i>c1;i--)
+    {
+        for(int j = 0; j<2*height+2; j++)
+        {
+            std::swap(arr[j][i],arr[j][i-1]) ;
+        }
+    }
+    c2++;
+    for(int i = 2*width+2; i>c2;i--)
+    {
+        for(int j = 0; j<2*height+2; j++)
+        {
+            std::swap(arr[j][i],arr[j][i-1]) ;
+        }
+    }*/
+    //print test
     std::vector<int> result;
     for(int i=0; i<2*height+1; i++){
         for(int j=0; j<width*2+1; j++){
             result.push_back(arr[i][j]);
         }
+    }
+    for(int i=0; i<2*height+1; i++){
+        for(int j=0; j<width*2+1; j++){
+            out<<result[i*19+j];
+        }
+        out<<std::endl;
     }
     return result;
 }
