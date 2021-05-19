@@ -57,112 +57,29 @@ bool saveScreenshot(const std::string &file, SDL_Renderer *renderer ) {
   return true;
 }
 
-void save_texture(SDL_Renderer *ren, SDL_Texture *tex, const char *filename)
-{
-    SDL_Texture *ren_tex;
-    SDL_Surface *surf;
-    int st;
-    int w;
-    int h;
-    int format;
-    void *pixels;
-
-    pixels  = NULL;
-    surf    = NULL;
-    ren_tex = NULL;
-    format  = SDL_PIXELFORMAT_RGBA32;
-
-    /* Get information about texture we want to save */
-    st = SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-    if (st != 0) {
-        SDL_Log("Failed querying texture: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    ren_tex = SDL_CreateTexture(ren, format, SDL_TEXTUREACCESS_TARGET, w, h);
-    if (!ren_tex) {
-        SDL_Log("Failed creating render texture: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    /*
-     * Initialize our canvas, then copy texture to a target whose pixel data we
-     * can access
-     */
-    st = SDL_SetRenderTarget(ren, ren_tex);
-    if (st != 0) {
-        SDL_Log("Failed setting render target: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    SDL_SetRenderDrawColor(ren, 0x00, 0x00, 0x00, 0x00);
-    SDL_RenderClear(ren);
-
-    st = SDL_RenderCopy(ren, tex, NULL, NULL);
-    if (st != 0) {
-        SDL_Log("Failed copying texture data: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    /* Create buffer to hold texture data and load it */
-    pixels = malloc(w * h * SDL_BYTESPERPIXEL(format));
-    if (!pixels) {
-        SDL_Log("Failed allocating memory\n");
-        goto cleanup;
-    }
-
-    st = SDL_RenderReadPixels(ren, NULL, format, pixels, w * SDL_BYTESPERPIXEL(format));
-    if (st != 0) {
-        SDL_Log("Failed reading pixel data: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    /* Copy pixel data over to surface */
-    surf = SDL_CreateRGBSurfaceWithFormatFrom(pixels, w, h, SDL_BITSPERPIXEL(format), w * SDL_BYTESPERPIXEL(format), format);
-    if (!surf) {
-        SDL_Log("Failed creating new surface: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    /* Save result to an image */
-    st = SDL_SaveBMP(surf, filename);
-    if (st != 0) {
-        SDL_Log("Failed saving image: %s\n", SDL_GetError());
-        goto cleanup;
-    }
-
-    SDL_Log("Saved texture as BMP to \"%s\"\n", filename);
-
-cleanup:
-    SDL_FreeSurface(surf);
-    free(pixels);
-    SDL_DestroyTexture(ren_tex);
-}
-
 //Texture wrapper class
 class LTexture
 {
-    public:
-        //Initializes variables
-        LTexture();
-        //Deallocates memory
-        ~LTexture();
-        //Loads image at specified path
-        bool loadFromFile( std::string path );
-        //Deallocates texture
-        void free();
-        //Renders texture at given point
-        void render( int x, int y, SDL_Rect* clip = NULL );
-        //Gets image dimensions
-        int getWidth();
-        int getHeight();
-        SDL_Texture* getTexture();
-    private:
-        //The actual hardware texture
-        SDL_Texture* mTexture;
-        //Image dimensions
-        int mWidth;
-        int mHeight;
+	public:
+		//Initializes variables
+		LTexture();
+		//Deallocates memory
+		~LTexture();
+		//Loads image at specified path
+		bool loadFromFile( std::string path );
+		//Deallocates texture
+		void free();
+		//Renders texture at given point
+		void render( int x, int y, SDL_Rect* clip = NULL );
+		//Gets image dimensions
+		int getWidth();
+		int getHeight();
+	private:
+		//The actual hardware texture
+		SDL_Texture* mTexture;
+		//Image dimensions
+		int mWidth;
+		int mHeight;
 };
 
 //Starts up SDL and creates window
@@ -197,33 +114,7 @@ LTexture::~LTexture()
     //Deallocate
     free();
 }
-int boundary(std::vector<int> maze, int i)
-{
-    int cols = 19, rows=21;
-    int r = i/cols, c = i%cols;
-    //start clockwise from tl
-    int b = 0;
-    if(r>0&&maze[i-cols]==1)
-        b+=2;
-    else
-        b+=1;
-    b*=10;
-    if(c<cols-1&&maze[i+1]==1)
-        b+=2;
-    else
-        b+=1;
-    b*=10;
-    if(r<rows-1&&maze[i+cols]==1)
-        b+=2;
-    else
-        b+=1;
-    b*=10;
-    if(c>0&&maze[i-1]==1)
-        b+=2;
-    else
-        b+=1;
-    return b;
-}
+
 
 int tileType (std::vector<int> maze, int i)
 {
@@ -235,14 +126,8 @@ int tileType (std::vector<int> maze, int i)
         return 0;
     }
 }
-int tileType2 (std::vector<int> dots, int i)
-{
-    switch(dots[i]){
-        case 0 : return -1;
-        case 1:  return 1;
-        case 2: return 0;
-    }
-}
+
+
 
 bool LTexture::loadFromFile( std::string path )
 {
@@ -308,11 +193,6 @@ int LTexture::getHeight()
     return mHeight;
 }
 
-SDL_Texture* LTexture::getTexture()
-{
-    return mTexture;
-}
-
 bool init()
 {
     //Initialization flag
@@ -373,26 +253,6 @@ bool loadMedia()
         }
     }
     return success;
-}
-
-bool loadMedia2()
-{
-	//Loading success flag
-	bool success = true;
-	//Load sprite sheet texture
-	if( !gSpriteSheetTexture.loadFromFile( "tiles/dotspritesheet.png" ) ){
-		printf( "Failed to load sprite sheet texture!\n" );
-		success = false;
-	}
-	else{
-        for(int i = 0; i<2;i++){
-            gSpriteClips[i].x = i*30;
-            gSpriteClips[i].y =    0;
-            gSpriteClips[i].w =   30;
-            gSpriteClips[i].h =   30;
-        }
-	}
-	return success;
 }
 
 void close()
@@ -462,138 +322,5 @@ int saveMap(std::vector<int> maze)
     //Free resources and close SDL
     close();
 
-    return 0;
-}
-
-int display(std::vector<int> dots)
-{
-    /*for(int i=0; i<28; i++){
-        for(int j=0; j<33; j++){
-            if(maze[33*i+j]==0)
-                std::cout<<"  ";
-            else std::cout<<maze[33*i+j]<<" ";
-        }
-        std::cout<<std::endl;
-    }*/
-	//Start up SDL and create window
-	if( !init() )
-		printf( "Failed to initialize!\n" );
-	else{
-		//Load media
-		if( !loadMedia2() )
-			printf( "Failed to load media!\n" );
-		else{
-			//Main loop flag
-			bool quit = false;
-			//Event handler
-			SDL_Event e;
-			//While application is running
-			while( !quit ){
-				//Handle events on queue
-				while( SDL_PollEvent( &e ) != 0 ){
-					//User requests quit
-					if( e.type == SDL_QUIT )
-						quit = true;
-				}
-				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
-				int r,c;
-				for(int i=0; i<dots.size(); i++)
-                {
-                    r = i/19; c = i % 19;
-                    if(dots[i]!=0)
-                        gSpriteSheetTexture.render( gSpriteClips[0].w*c, gSpriteClips[1].h*r, &gSpriteClips[tileType(dots,i)] );
-                }
-				//Update screen
-				SDL_RenderPresent( gRenderer );
-				//if(saveScreenshot("dots.png", gRenderer ))
-                    //break;
-				//save_texture("./map.png", gRenderer, gSpriteSheetTexture.getTexture());
-			}
-			//std::cout<<"Saving..."<<std::endl;
-
-		}
-	}
-
-	//Free resources and close SDL
-	close();
-
-	return 0;
-}
-
-int displaydots(std::vector<int> dots)
-{
-    int i = 0;
-    int a = 1;
-    SDL_Event event;
-
-    SDL_Surface* background_surface = NULL;
-    SDL_Texture* background_texture = NULL;
-
-    SDL_Rect bg_pos;
-    bg_pos.w = 570;
-    bg_pos.h = 630;
-    bg_pos.x = 0;
-    bg_pos.y = 0;
-
-
-
-    if( !init() )
-		printf( "Failed to initialize!\n" );
-	else{
-	    std::string p = "Map.png";
-        background_surface = IMG_Load( p.c_str() );
-        background_texture = SDL_CreateTextureFromSurface(gRenderer, background_surface);
-		//Load media
-		if( !loadMedia2() )
-			printf( "Failed to load media!\n" );
-		else{
-			//Main loop flag
-			bool quit = false;
-			//Event handler
-			SDL_Event e;
-			//While application is running
-			while( !quit && i<dots.size() ){
-				//Handle events on queue
-				while( SDL_PollEvent( &e ) != 0 ){
-					//User requests quit
-					if( e.type == SDL_QUIT )
-						quit = true;
-				}
-				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
-                SDL_RenderCopy(gRenderer, background_texture, NULL, &bg_pos);
-				int r,c;
-				for(int i=0; i<dots.size(); i++)
-                {
-                    r = i/19; c = i % 19;
-                    if(dots[i]==0)
-                        continue;
-                    gSpriteSheetTexture.render( gSpriteClips[0].w*c, gSpriteClips[1].h*r, &gSpriteClips[tileType2(dots,i)] );
-                }
-				//Update screen
-				SDL_RenderPresent( gRenderer );
-				//Testing eatdot
-				r = i/19;
-				c = i%19;
-				if((double)rand()/RAND_MAX < 0.005){
-                    eatDot(dots, r, c);
-                    i++;
-				}
-				//if(saveScreenshot("dots.png", gRenderer ))
-                    //break;
-				//save_texture("./map.png", gRenderer, gSpriteSheetTexture.getTexture());
-			}
-			//std::cout<<"Saving..."<<std::endl;
-
-		}
-	}
-
-	//Free resources and close SDL
-	SDL_DestroyTexture(background_texture);
-    SDL_FreeSurface(background_surface);
-	close();
     return 0;
 }
