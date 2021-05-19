@@ -5,5 +5,7 @@
 #include <vector>
 
 int saveMap(std::vector<int> maze);
-
+int display(std::vector<int> dots);
+int displaydots(std::vector<int> dots);
 #endif
+

@@ -1,0 +1,21 @@
+#include "cell.h"
+#include "grid.h"
+#include "mazeimage.h"
+#include "dots.h"
+
+//THIS WILL SHOW THE DOTS OVER THE MAP BACKGROUND - OFFSET HAS NOT BEEN DONE YET
+srand(time(0));
+Grid grid = Grid();
+std::vector<int> maze = grid.generateMaze();
+std::vector<int> dots = populate(maze,21,19);
+int r = displaydots(dots);
+
+
+//USE this to eat a dot at row, col
+//Returns -1: no dot at the point, 1: small dot eaten, 2: big dot eaten
+int k = eatDot(std::vector<int> &dots, int row, int col);
+
+
+//CURRENT ISSUES:-
+//	Once displaydots(dots) is running, we need to alter dots inside that function only right now - so you can try to integrate the entire function in your game
+//	Problem in Displaydots or populate which is leading to errors - need to find out what
