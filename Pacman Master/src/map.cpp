@@ -60,14 +60,19 @@ void Map::init() {
             dotmaze[i][j] = dots[19*i+j];
  
             if(dotmaze[i][j]==1) {
-                totaldot++;
             }
-            if(maze[i][j]==2) {
-                totaldot++;
+            else if(maze[i][j]==2) {
+
                 powerdot++;
             }
             
-            //cout<<dotmaze[i][j];
+            if(dotmaze[i][j]==1 || dotmaze[i][j]==2)
+            {
+                totaldot++;
+            }
+                
+            
+           // {cout<<dotmaze[i][j];}
            
         }
         

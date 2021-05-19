@@ -5,6 +5,7 @@
 #include "help.hpp"
 #include "character.hpp"
 #include "gameover.hpp"
+#include "about.hpp"
 
 int menuLogic(std::string s) {
     if(s=="menu") {
@@ -54,7 +55,11 @@ int menuLogic(std::string s) {
     }
     
     else if (s=="about") {
-        return 0;
+        About A;
+        A.init();
+        A.loop();
+        A.kill();
+        return menuLogic(A.newwindow);
     }
     
     else if (s=="quit") {

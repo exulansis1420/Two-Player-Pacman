@@ -14,6 +14,17 @@ Gameplay::Gameplay() {
    
 }
 
+bool allZero(vector<int> v) {
+    
+    for(int i=0;i<v.size();i++) {
+        if(v[i]!=0) {
+            return false;
+        }
+    }
+    return true;
+    
+}
+
 
 void Gameplay::loop() {
     
@@ -125,12 +136,12 @@ void Gameplay::loop() {
             quit=true;
         }
         
-        if(m.totaldot==pacman.getDotsEaten()) {
+        if(allZero(m.dots)) {
             winner=0;
             quit=true;
         }
         
-       // cout<<pacman.getDotsEaten()<<" "<<m.totaldot<<endl;
+      // cout<<pacman.getDotsEaten()<<" "<<m.totaldot<<endl;
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);

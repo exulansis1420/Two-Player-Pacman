@@ -1,19 +1,19 @@
-#include "help.hpp"
+#include "about.hpp"
 
 using namespace std;
 
-Help::Help() {
+About::About() {
     
     
 }
 
-void Help::init() {
+void About::init() {
     SDL_Init( SDL_INIT_EVERYTHING );
     Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     IMG_Init(IMG_INIT_PNG) ;
     TTF_Init();
 
-    window = SDL_CreateWindow( "PacMan 1.0 - Help", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 600, 650, SDL_WINDOW_SHOWN );
+    window = SDL_CreateWindow( "PacMan 1.0 - About", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 600, 650, SDL_WINDOW_SHOWN );
 
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
 
@@ -27,21 +27,21 @@ void Help::init() {
     red = {255,0,0};
     
    
-    title_s = TTF_RenderText_Solid(font, "help", {0,255,0});
+    title_s = TTF_RenderText_Solid(font, "ABOUT", {0,255,0});
     title_t = SDL_CreateTextureFromSurface(renderer, title_s);
     
-    title2_s = TTF_RenderText_Solid(font2, "controls", {255,0,0});
+    title2_s = TTF_RenderText_Solid(font2, "DEVELOPERS", {255,0,0});
     title2_t = SDL_CreateTextureFromSurface(renderer, title2_s);
 
-    one_surf = TTF_RenderText_Solid(font2_small, "pacman : up, down, left, right", yellow);
+    one_surf = TTF_RenderText_Solid(font2_small, "TANISHQ DUBEY", yellow);
     one_text = SDL_CreateTextureFromSurface(renderer, one_surf);
     
-   two_surf = TTF_RenderText_Solid(font2_small, "blinky : W, S, A, D", yellow);
+   two_surf = TTF_RenderText_Solid(font2_small, "ANIKET MISHRA", yellow);
    two_text = SDL_CreateTextureFromSurface(renderer, two_surf);
 
     /*
-    help_surf = TTF_RenderText_Solid(font2, "help", red);
-    help_text = SDL_CreateTextureFromSurface(renderer, help_surf);
+    About_surf = TTF_RenderText_Solid(font2, "About", red);
+    About_text = SDL_CreateTextureFromSurface(renderer, About_surf);
 
     about_surf = TTF_RenderText_Solid(font2, "about", red);
     about_text = SDL_CreateTextureFromSurface(renderer, about_surf);
@@ -58,7 +58,7 @@ void Help::init() {
 }
 
     
-void Help::loop() {
+void About::loop() {
     SDL_Rect dest;
     bool quit=false;
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
@@ -150,7 +150,7 @@ void Help::loop() {
     
 }
 
-void Help::kill() {
+void About::kill() {
     
     TTF_CloseFont( font );
     TTF_CloseFont(font2 );

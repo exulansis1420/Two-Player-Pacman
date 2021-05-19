@@ -37,7 +37,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
     //0 = DEFAULT //1 = UP, 2 = RIGHT, 3 = LEFT, 4 = DOWN
    
         if(direction ==0) {
-            //no direction change
+            animstartframe = 0;
         }
         else if(direction ==1) {
             animstartframe = 0;
@@ -71,7 +71,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
          if(check==1) {
             
         }
-        else {Entity::move(0,-2);}
+        else {Entity::move(0,-1);}
         curry = (Entity::screenPosX + Entity::width/2-10) /30;
         currx = (Entity::screenPosY-10 ) /30;
     }
@@ -85,7 +85,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
             Entity::screenPosX=0;
             Entity::entRect.x=0;
         }
-        else {Entity::move(2,0);}
+        else {Entity::move(1,0);}
         curry = (Entity::screenPosX + Entity::width -10 ) /30;
         currx = (Entity::screenPosY + Entity::height/2 -10) /30;
     }
@@ -98,7 +98,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
             Entity::screenPosX=590;
             Entity::entRect.x=590;
         }
-        else {Entity::move(-2,0);}
+        else {Entity::move(-1,0);}
         curry = (Entity::screenPosX  -10) /30;
         currx = (Entity::screenPosY + Entity::height/2 -10) /30;
     }
@@ -108,7 +108,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         if(check==1) {
             
         }
-        else {Entity::move(0,2);}
+        else {Entity::move(0,1);}
         curry = (Entity::screenPosX + Entity::width/2 -10 ) /30;
         currx = (Entity::screenPosY + Entity::height -10 ) /30;
     }
@@ -180,6 +180,7 @@ void PacMan::reset(Map &m) {
     Entity::screenPosY= 10+30*m.getPMspawn().first;
     Entity::entRect.x = Entity::screenPosX;
     Entity::entRect.y = Entity::screenPosY;
+    dir=0;
     lives=lives-1;
 }
 
@@ -196,6 +197,7 @@ void PacMan::reset2(Map &m) {
     Entity::screenPosY= 10+30*m.getPMspawn().first;
     Entity::entRect.x = Entity::screenPosX;
     Entity::entRect.y = Entity::screenPosY;
+    dir=0;
     lives=lives+1;
 }
 

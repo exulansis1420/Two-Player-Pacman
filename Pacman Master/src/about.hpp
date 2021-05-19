@@ -7,7 +7,7 @@
 #include <SDL2/SDL_mixer.h>
 #include "pacman.hpp"
 
-class Help
+class About
 {
 private:
     SDL_Window* window;
@@ -23,7 +23,7 @@ private:
 
   
 public:
-    Help();
+    About();
     std::string newwindow;
     void init();
     void kill();
