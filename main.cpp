@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include "menu.hpp"
 #include "gameplay.hpp"
+#include "help.hpp"
+#include "character.hpp"
 
 
 
@@ -25,14 +27,25 @@ int main(int argc, char** args)
     
     
         if(M.newwindow=="start") {
-            Gameplay G;
-            G.init();
-            G.loop();
-            G.kill();
+            Character C;
+            C.init();
+            C.loop();
+            C.kill();
+            
+            if(C.newwindow=="game") {
+                Gameplay G;
+                G.init( C.charInt);
+                G.loop();
+                G.kill();
+                
+            }
         }
         
         else if(M.newwindow=="help") {
-           
+            Help H;
+            H.init();
+            H.loop();
+            H.kill();
         }
         
         else if(M.newwindow=="about") {

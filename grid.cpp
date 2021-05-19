@@ -178,7 +178,7 @@ int Grid::calculateIndex(int row, int column) {
 
 std::vector<int> Grid::addThickness(){
     std::ofstream out;
-    out.open("maze.txt");
+    out.open("/Users/tanishq/Desktop/SDL Tutorial copy/SDL Tutorial/maze.txt");
     //I want to repeat 2 random cols and 1 random row -NOPE!
     int arr[21][19];
     for(int i=0; i<2*height+1; i++){

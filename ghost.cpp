@@ -1,11 +1,11 @@
-#include "pacman.hpp"
+#include "ghost.hpp"
 #include<iostream>
 
-PacMan::PacMan() : Entity() {
+Ghost::Ghost() : Entity() {
     //
 }
 
-PacMan::PacMan(std::pair<int,int> spawnPos) : Entity()
+Ghost::Ghost(std::pair<int,int> spawnPos) : Entity()
 {
     Entity::tileX = spawnPos.second;
     Entity::tileY = spawnPos.first;
@@ -19,10 +19,10 @@ PacMan::PacMan(std::pair<int,int> spawnPos) : Entity()
     Entity::entRect.w = 30;
     Entity::entRect.h = 30;
 
-    eatenDots = 0;
+  
     dir = 0;
 }
-void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m) {
+void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, Map &m) {
     //0 = DEFAULT //1 = UP, 2 = RIGHT, 3 = LEFT, 4 = DOWN
    
         if(direction ==0) {
@@ -34,21 +34,21 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         }
         else if(direction==2) {
             
-            animstartframe = 135;
+            animstartframe = 90;
         }
         else if(direction==3){
             
-            animstartframe = 90;
+            animstartframe = 60;
         }
         else{
 
-            animstartframe = 45;
+            animstartframe = 30;
         }
-        int totalFrames = 3;
+        int totalFrames = 2;
         int delayPerFrame = 100;
         
         int frame = (SDL_GetTicks() / delayPerFrame) % totalFrames;
-        textureRect.y = 0;
+        textureRect.y = 15;
         textureRect.x = animstartframe + frame * textureRect.w;
 
     int currx = m.getPMpos().first;
@@ -69,6 +69,10 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         if(check==1) {
             
         }
+        else if(screenPosX>590) {
+            Entity::screenPosX=0;
+            Entity::entRect.x=0;
+        }
         else {Entity::move(2,0);}
         curry = (Entity::screenPosX + Entity::width -10 ) /30;
         currx = (Entity::screenPosY + Entity::height/2 -10) /30;
@@ -77,6 +81,10 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         check= m.maze[currx][curry];
         if(check==1) {
             
+        }
+        else if(screenPosX<0) {
+            Entity::screenPosX=590;
+            Entity::entRect.x=590;
         }
         else {Entity::move(-2,0);}
         curry = (Entity::screenPosX  -10) /30;
@@ -99,7 +107,7 @@ void PacMan::animate(SDL_Rect &textureRect, int direction, int &animstartframe, 
         //screenPosY.;
 }
 
-void PacMan::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
+void Ghost::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
 {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
@@ -135,22 +143,6 @@ void PacMan::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
 }
 
 
-void PacMan::eatDot()
-{
-    eatenDots++;
-}
 
-int PacMan::getDotsEaten()
-{
-    return eatenDots;
-}
 
-void PacMan::setDead(bool d)
-{
-    dead = d;
-}
 
-bool PacMan::isDead()
-{
-    return dead;
-}

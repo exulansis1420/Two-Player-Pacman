@@ -17,8 +17,6 @@ Menu::Menu() {
     
 }
 
-
-
 bool Menu::loop() {
 
     SDL_Rect dest;
@@ -66,7 +64,14 @@ bool Menu::loop() {
         }
         
         if (keys[SDL_SCANCODE_RETURN]){
-            newwindow="start";
+            if(ax==0)
+            {newwindow="start";}
+            else if(ax==1) {
+                newwindow="help";
+            }
+            else if(ax==2){
+                newwindow="about";
+            }
             return false;
            
         }
@@ -207,7 +212,7 @@ bool Menu::init() {
     font2 = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",40);
     font2_small = TTF_OpenFont("/Users/tanishq/Downloads/emulogic.ttf",20);
 
-    yellow = {255,231,55  };
+    yellow = {255,231,55};
     white = {255,255,255};
     red = {255,0,0};
     
@@ -266,6 +271,8 @@ void Menu::kill() {
     SDL_StopTextInput();
 
     TTF_CloseFont( font );
+    TTF_CloseFont(font2 );
+    TTF_CloseFont(font2_small);
     SDL_DestroyTexture( texture );
     texture = NULL;
     
@@ -284,6 +291,10 @@ void Menu::kill() {
     SDL_FreeSurface(continue_surf);
     SDL_FreeSurface(empty_surf);
     SDL_FreeSurface(temp);
+    
+    Mix_FreeChunk( menuchange );
+    Mix_FreeChunk( interim ) ;
+    Mix_FreeChunk( intro );
     
     
 

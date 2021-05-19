@@ -25,5 +25,3 @@ class Cell {
 };
 
 #endif
-
-

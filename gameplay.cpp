@@ -34,18 +34,28 @@ void Gameplay::loop() {
             if (input.type == SDL_QUIT) quit = true;
         }
         
-        pacman.move(m,textureRect,animstartframe);
+        if(character==0)
+        {
+            pacman.move(m,textureRect,animstartframe);
+
+            
+        }
+        else {
+            ghost.move(m,textureRect2,animstartframe);
+        }
         pacmanRect = pacman.getEntRect();
+        ghostRect = ghost.getEntRect();
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-//        src.x=0;
-//        src.y=0;
-//        src.w=560;
-//        src.h=660;
-//        SDL_RenderCopy(renderer, BG, NULL, &src);
-          SDL_RenderCopy(renderer, spriteSheet, &textureRect, &pacmanRect);
+        src.x=10;
+        src.y=10;
+        src.w=570;
+        src.h=630;
+        SDL_RenderCopy(renderer, BG, NULL, &src);
+        SDL_RenderCopy(renderer, spriteSheet, &textureRect, &pacmanRect);
+        SDL_RenderCopy(renderer, spriteSheet, &textureRect2, &ghostRect);
         
         
         dest.x = 40;
@@ -103,25 +113,33 @@ void Gameplay::loop() {
     
 }
 
-void Gameplay::init() {
+void Gameplay::init(int c) {
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
     
+    m.init();
+    
+    character =c;
+    
     window = SDL_CreateWindow("Pacman 1.0", SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED, 560, 720, SDL_WINDOW_SHOWN);
+    SDL_WINDOWPOS_UNDEFINED, 590, 740, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, 0);
-    temp2 = IMG_Load("/Users/tanishq/Desktop/SDL Tutorial/SDL Tutorial/maze1.png");
+    temp2 = IMG_Load("/Users/tanishq/Desktop/SDL Tutorial copy/SDL Tutorial/map.png");
     temp3 = IMG_Load("/Users/tanishq/Downloads/pacman.png");
     
     font3 = TTF_OpenFont("/Users/tanishq/Downloads/maneaterbb_bold.ttf",30);
     BG = SDL_CreateTextureFromSurface(renderer, temp2);
     PM = SDL_CreateTextureFromSurface(renderer, temp3);
     
-    m.init();
+  
     pacman= PacMan(m.getPMspawn());
-    pacman.setimage(spriteSheet, textureRect, renderer);
+    pacman.setimage(spriteSheet, textureRect, renderer,0);
     pacmanRect = pacman.getEntRect();
+    
+    ghost= Ghost(m.getGspawn());
+    ghost.setimage(spriteSheet, textureRect2, renderer,1);
+    ghostRect = ghost.getEntRect();
 }
 
 void Gameplay::kill() {

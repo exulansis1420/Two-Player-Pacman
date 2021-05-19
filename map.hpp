@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Map{
 private:
@@ -19,6 +20,7 @@ private:
 public:
     Map();
     int maze[28][33];
+    std::vector<int> mvector;
     std::pair<int,int> getPMspawn() ;
     std::pair<int,int> getGspawn() ;
     std::pair<int,int> getPMpos() ;

@@ -5,6 +5,5 @@
 #include <vector>
 
 int saveMap(std::vector<int> maze);
+void close();
 #endif
-
-
