@@ -8,6 +8,7 @@
 #include "pacman.hpp"
 #include "map.hpp"
 #include "ghost.hpp"
+#include "dots.h"
 
 class Gameplay
 {
@@ -28,9 +29,13 @@ private:
     SDL_Rect ghostRect;
     int animstartframe;
     int character;
+    
+  
 
 public:
     Gameplay();
+    int winner;
+    std::string newwindow;
     void init(int c);
     void kill();
     void loop();

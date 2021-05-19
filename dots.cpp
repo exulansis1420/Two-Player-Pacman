@@ -62,6 +62,7 @@ int eatDot(std::vector<int> &dots, int row, int col)
         case 2: dots[row*19+col] = 0; return 2;
                 break;
     }
+    return 0;
 
 }
 
@@ -80,6 +81,7 @@ int tileType2 (std::vector<int> dots, int i)
         case 1:  return 1;
         case 2: return 0;
     }
+    return 0;
 }
 
 bool dotloadMedia()
@@ -90,7 +92,7 @@ bool dotloadMedia()
         dotgSpriteClips[i].w =   30;
         dotgSpriteClips[i].h =   30;
     }
-	return true;
+    return true;
 }
 
 /*SDL_Texture* newTexture = NULL;
@@ -98,6 +100,7 @@ std::string path = "/Users/tanishq/Downloads/dotspritesheet.png"
 SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 */
+
 int displayDots(std::vector<int> dots, SDL_Texture* mTexture, SDL_Renderer* &R)
 {
     int r,c;
@@ -117,4 +120,5 @@ int displayDots(std::vector<int> dots, SDL_Texture* mTexture, SDL_Renderer* &R)
         //Render to screen
         SDL_RenderCopy( R, mTexture, clip, &renderQuad );
     }
+    return 0;
 }

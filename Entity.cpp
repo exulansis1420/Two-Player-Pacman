@@ -4,7 +4,8 @@
 
 Entity::Entity()
 {
-    //default constr
+    play_intro=true;
+
 }
 
 Entity::Entity(float x, float y, float w, float h)
@@ -43,10 +44,10 @@ int Entity::getTileY()
 
 void Entity::move(float x, float y)
 {
-    screenPosX += x;
-    entRect.x += x;
-    screenPosY += y;
-    entRect.y += y;
+    screenPosX += (int) x;
+    entRect.x += (int) x;
+    screenPosY += (int) y;
+    entRect.y += (int) y;
 
     /*if ((int)(screenPosX + 8) % 16 == 0 && (int)(screenPosY + 8) % 16 == 0)
     {
@@ -55,14 +56,22 @@ void Entity::move(float x, float y)
     }*/
 }
 
-void Entity::setimage(SDL_Texture* &spriteSheet,SDL_Rect &textureRect, SDL_Renderer* &renderer)
+void Entity::setimage(SDL_Texture* &spriteSheet,SDL_Rect &textureRect, SDL_Renderer* &renderer, int ch)
 {
     SDL_Surface* temp = IMG_Load("/Users/tanishq/Desktop/SDL Tutorial/SDL Tutorial/things.png");
     
     spriteSheet = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
-    textureRect.x = 0;
-    textureRect.y = 0;
+    
+    if(ch==0)
+    {
+        textureRect.x = 15;
+        textureRect.y = 0;
+    }
+    else {
+        textureRect.x = 15;
+        textureRect.y = 15;
+    }
 
     SDL_QueryTexture(spriteSheet, NULL, NULL, &textureRect.w, &textureRect.h);
    

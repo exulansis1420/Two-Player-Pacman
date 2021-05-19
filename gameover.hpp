@@ -5,27 +5,26 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include "pacman.hpp"
 
-class Help
+class GameOver
 {
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;
-    SDL_Event input;
+    SDL_Texture *bigpac, *bigghost;
     TTF_Font* font, *font2, *font2_small;
-    Mix_Chunk *interim;
+    Mix_Chunk  *interim;
     bool intro_played;
-    
+    SDL_Event input;
     SDL_Color yellow,white,red ;
-    SDL_Surface *title_s, *rules_s, *controls_s, *up_s, *down_s, *right_s, *left_s;
-    SDL_Texture *title_t, *rules_t, *controls_t, *up_t, *down_t, *right_t, *left_t;
+    SDL_Surface *title_surf, *continue_surf, *empty_surf, *temp, *name1_surf, *name2_surf;
+    SDL_Texture *title_text, *continue_text, *empty_text, *name1_text, *name2_text;
 
-  
 public:
-    Help();
     std::string newwindow;
-    void init();
+    int winner;
+    GameOver();
+    void init(int w);
     void kill();
     void loop();
 };

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "mazeimage.h"
 
 class Map{
 private:
@@ -17,17 +18,19 @@ private:
     int dot;
     int powerdot;
     
+    
 public:
     Map();
-    int maze[28][33];
+    std::vector<int> dots;
+    int maze[25][25];
+    int dotmaze[25][25];
     std::vector<int> mvector;
     std::pair<int,int> getPMspawn() ;
     std::pair<int,int> getGspawn() ;
     std::pair<int,int> getPMpos() ;
     std::pair<int,int> getGpos() ;
-    std::pair<int,int> getPgatepos();
-    std::pair<int,int> getGgatepos() ;
     void updatePMpos(std::pair<int,int> p);
+    void updateGpos(std::pair<int,int> p);
     void init();
     void kill();
 };

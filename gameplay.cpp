@@ -1,4 +1,6 @@
 #include "gameplay.hpp"
+#include "mazeimage.h"
+
 
 
 using namespace std;
@@ -12,6 +14,7 @@ Gameplay::Gameplay() {
    
 }
 
+
 void Gameplay::loop() {
     
     SDL_Rect src;
@@ -20,31 +23,88 @@ void Gameplay::loop() {
     SDL_Surface* text_surf1 = TTF_RenderText_Solid(font3, "score:", {255,255,255});
     SDL_Texture* text1 = SDL_CreateTextureFromSurface(renderer, text_surf1);
     
-    SDL_Surface* text_surf2 = TTF_RenderText_Solid(font3, "0000", {255,255,0});
-    SDL_Texture* text2 = SDL_CreateTextureFromSurface(renderer, text_surf2);
+    SDL_Surface* text_surf2=NULL;
+    SDL_Texture* text2=NULL;
     
     SDL_Surface* text_surf3 = TTF_RenderText_Solid(font3, "lives:", {255,255,255});
     SDL_Texture* text3 = SDL_CreateTextureFromSurface(renderer, text_surf3);
     
+    SDL_Texture* newTexture = NULL;
+    std::string path = "/Users/tanishq/Downloads/dotspritesheet.png";
+    SDL_Surface* loadedSurface = IMG_Load("/Users/tanishq/Downloads/dotspritesheet.png");
+    newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     
+    dotloadMedia();
+
+//    initt();
+//    loadMedia2();
+//    close();
+    
+
     while (!quit)
     {
         while (SDL_PollEvent(&input) > 0)
         {
-            if (input.type == SDL_QUIT) quit = true;
+            if (input.type == SDL_QUIT)
+            {
+                newwindow = "quit"; 
+                quit = true;
+            }
         }
         
-        if(character==0)
-        {
-            pacman.move(m,textureRect,animstartframe);
-
-            
-        }
-        else {
-            ghost.move(m,textureRect2,animstartframe);
-        }
+//        if(character==0)
+//        {
+//            pacman.move(m,textureRect,animstartframe);
+//
+//
+//        }
+//        else {
+//            ghost.move(m,textureRect2,animstartframe);
+//        }
+        
+        
         pacmanRect = pacman.getEntRect();
         ghostRect = ghost.getEntRect();
+        
+        pacman.move(m,textureRect,animstartframe);
+        ghost.move(m,textureRect2,animstartframe);
+        
+        
+        
+        float a = pacmanRect.x+15;
+        float b = pacmanRect.y+15;
+        
+        float c = ghostRect.x+15;
+        float d = ghostRect.y+15;
+        
+        int y = (a-10)/30;
+        int x = (b-10)/30;
+        
+        if(m.dotmaze[x][y]==1 || m.dotmaze[x][y]==2) {
+            pacman.eatDot(x,y,m);
+        }
+        
+        int scoree = 10 * pacman.getDotsEaten();
+        std::string s = std::to_string(scoree);
+        const char * cc = s.c_str();
+        
+        text_surf2 = TTF_RenderText_Solid(font3, cc, {255,255,0});
+        text2 = SDL_CreateTextureFromSurface(renderer, text_surf2);
+        
+        
+        float dist = pow(pow(a-c, 2) + pow(b-d,2), 0.5);
+        
+        if(dist<20) {
+            pacman.reset(m);
+            ghost.reset(m);
+        }
+        
+        int lives=pacman.lives;
+        
+        if(lives==0) {
+            winner=1;
+            quit=true;
+        }
         
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -54,6 +114,7 @@ void Gameplay::loop() {
         src.w=570;
         src.h=630;
         SDL_RenderCopy(renderer, BG, NULL, &src);
+        displayDots(m.dots,newTexture,renderer);
         SDL_RenderCopy(renderer, spriteSheet, &textureRect, &pacmanRect);
         SDL_RenderCopy(renderer, spriteSheet, &textureRect2, &ghostRect);
         
@@ -70,6 +131,9 @@ void Gameplay::loop() {
         dest.w = text_surf2->w;
         dest.h = text_surf2->h;
         SDL_RenderCopy(renderer, text2, NULL, &dest);
+        
+        SDL_FreeSurface(text_surf2);
+        SDL_DestroyTexture(text2);
 
 
         dest.x = 330;
@@ -78,9 +142,7 @@ void Gameplay::loop() {
         dest.h = text_surf3->h;
         SDL_RenderCopy(renderer, text3, NULL, &dest);
 
-       
 
-        int lives=3;
         src.x=435;
         src.y=670;
         src.w=35;
@@ -101,7 +163,7 @@ void Gameplay::loop() {
     text_surf1=NULL;
     text1=NULL;
     
-    SDL_FreeSurface(text_surf2);
+   // SDL_FreeSurface(text_surf2);
     SDL_DestroyTexture( text2 );
     text_surf2=NULL;
     text2=NULL;
@@ -110,6 +172,9 @@ void Gameplay::loop() {
     SDL_DestroyTexture( text3 );
     text_surf3=NULL;
     text3=NULL;
+    
+    SDL_FreeSurface(loadedSurface);
+    SDL_DestroyTexture( newTexture );
     
 }
 
@@ -151,7 +216,9 @@ void Gameplay::kill() {
     SDL_DestroyTexture(PM);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    Mix_CloseAudio();
 
+    //close1();
     IMG_Quit();
     SDL_Quit();
 }

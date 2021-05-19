@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 #include "map.hpp"
+#include <SDL2/SDL_mixer.h>
 
 class Ghost
     : public Entity
@@ -20,5 +21,6 @@ public:
 
     void setDead(bool d);
     bool isDead();
+    void reset(Map &m);
 };
 

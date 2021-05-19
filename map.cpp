@@ -1,6 +1,7 @@
 #include "map.hpp"
 #include "grid.h"
 #include "cell.h"
+#include "dots.h"
 #include<fstream>
 
 using namespace std;
@@ -21,6 +22,9 @@ void Map::init() {
     Grid g = Grid();
     std::vector<int> m = g.generateMaze();
     mvector = m;
+    saveMap(mvector);
+
+    dots = populate(m,21,19);
  
     // 0 - EMPTY
     // 1 - WALL
@@ -32,14 +36,8 @@ void Map::init() {
     for(int i=0; i<21; i++){
         for(int j=0; j<19; j++){
             maze[i][j] = m[19*i+j];
-
-            if(maze[i][j]==6) {
-                dot++;
-            }
-            else if(maze[i][j]==7) {
-                powerdot++;
-            }
-            else if(maze[i][j]==2) {
+ 
+        if(maze[i][j]==2) {
                 PMspawn.first = i;
                 //std::cout<<i<<" ";
                 PMspawn.second = j;
@@ -49,49 +47,31 @@ void Map::init() {
             else if(maze[i][j]==3) {
                 Gspawn.first = i;
                 Gspawn.second = j;
+                Gpos = Gspawn;
             }
            
         }
     }
     
-//    // Create a text string, which is used to output the text file
-//    string myText;
-//
-//    // Read from the text file
-//    std::ifstream MyReadFile("/Users/tanishq/Downloads/maze.txt");
-//
-//    // Use a while loop together with the getline() function to read the file line by line
-//    int j=0;
-//    while (getline (MyReadFile, myText)) {
-//      // Output the text from the file
-//        for(int i=0;i<19;i++) {
-//            maze[j][i] = myText[i]-'0';
-//            cout<<maze[j][i];
-//                        if(maze[j][i]==6) {
-//                            dot++;
-//                        }
-//                        else if(maze[j][i]==7) {
-//                            powerdot++;
-//                        }
-//                        else if(maze[j][i]==2) {
-//                            PMspawn.first = j;
-//                            //std::cout<<i<<" ";
-//                            PMspawn.second = i;
-//                            //std::cout<<j<<" ";
-//                            PMpos = PMspawn;
-//                        }
-//                        else if(maze[j][i]==3) {
-//                            Gspawn.first = j;
-//                            Gspawn.second = i;
-//                        }
-//
-//        }
-//        cout<<endl;
-//        j++;
-//
-//    }
-//
-//    MyReadFile.close();
+    for(int i=0; i<21; i++){
+        for(int j=0; j<19; j++){
+            dotmaze[i][j] = dots[19*i+j];
+ 
+            if(dotmaze[i][j]==1) {
+                dot++;
+            }
+            else if(maze[i][j]==2) {
+                powerdot++;
+            }
+            
+            cout<<dotmaze[i][j];
+           
+        }
+        
+        cout<<endl;
+    }
+    
+
    
 }
 
@@ -107,15 +87,13 @@ std::pair<int,int> Map::getPMpos() {
 std::pair<int,int> Map::getGpos() {
     return Gpos;
 }
-std::pair<int,int> Map::getPgatepos() {
-    return Pgatepos;
-}
-std::pair<int,int> Map::getGgatepos() {
-    return Ggatepos;
-}
 
 void Map::updatePMpos(std::pair<int,int> p) {
     PMpos.first = p.first;
     PMpos.second = p.second;
 }
 
+void Map::updateGpos(std::pair<int,int> p) {
+    Gpos.first = p.first;
+    Gpos.second = p.second;
+}

@@ -44,7 +44,11 @@ bool Menu::loop() {
  
     while ( SDL_PollEvent( &e ) != 0 ) {
         
-        if (e.type == SDL_QUIT) return false;
+        if (e.type == SDL_QUIT)
+        {
+            newwindow="quit";
+            return false;
+        }
         if (keys[SDL_SCANCODE_UP]){
             ax= (ax-1)%3 ;
             ay= (ay-1)%3 ;
@@ -307,7 +311,8 @@ void Menu::kill() {
     intro = NULL;
     interim = NULL;
     
-
+    Mix_CloseAudio();
+    Mix_Quit();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();

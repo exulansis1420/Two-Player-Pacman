@@ -54,14 +54,22 @@ void Help::init() {
 void Help::loop() {
     SDL_Rect dest;
     bool quit=false;
-       
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
     while (!quit)
     {
         while (SDL_PollEvent(&input) > 0)
         {
-            if (input.type == SDL_QUIT) quit = true;
+            if (input.type == SDL_QUIT)
+            {
+                newwindow="quit";
+                quit = true;
+            }
+            
+            if (keys[SDL_SCANCODE_ESCAPE]){
+                newwindow="menu";
+                quit=true;}
         }
-        
+         
        
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -94,7 +102,7 @@ void Help::kill() {
     window = NULL;
     renderer = NULL;
     interim = NULL;
-    
+    Mix_CloseAudio();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();

@@ -18,6 +18,7 @@ Ghost::Ghost(std::pair<int,int> spawnPos) : Entity()
     Entity::entRect.y = 10+30*spawnPos.first;
     Entity::entRect.w = 30;
     Entity::entRect.h = 30;
+    Entity::siren = Mix_LoadWAV( "/Users/tanishq/Downloads/pacman-master 2/data/sounds/siren_slow.wav" );
 
   
     dir = 0;
@@ -51,15 +52,15 @@ void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, M
         textureRect.y = 15;
         textureRect.x = animstartframe + frame * textureRect.w;
 
-    int currx = m.getPMpos().first;
-    int curry = m.getPMpos().second;
+    int currx = m.getGpos().first;
+    int curry = m.getGpos().second;
     int check =-1;
     if(direction==1) {
         check= m.maze[currx][curry];
         if(check==1) {
             
         }
-        else {Entity::move(0,-2);}
+        else {Entity::move(0,-2.0);}
         curry = (Entity::screenPosX + Entity::width/2-10) /30;
         currx = (Entity::screenPosY-10 ) /30;
     }
@@ -100,9 +101,15 @@ void Ghost::animate(SDL_Rect &textureRect, int direction, int &animstartframe, M
         currx = (Entity::screenPosY + Entity::height -10 ) /30;
     }
     
+    if(Mix_Playing(2)!=1)
+    {
+        Mix_PlayChannel( 2, Entity::siren, 0 );
+    }
     
-    m.updatePMpos({currx,curry});
-   std::cout<<currx<<" "<<curry<<" "<<Entity::screenPosX<<" "<<Entity::screenPosY<<std::endl;
+
+    
+    m.updateGpos({currx,curry});
+   //std::cout<<currx<<" "<<curry<<" "<<Entity::screenPosX<<" "<<Entity::screenPosY<<std::endl;
     
         //screenPosY.;
 }
@@ -112,37 +119,48 @@ void Ghost::move(Map &m, SDL_Rect &textureRect, int &animstartframe)
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     
-    int currx = m.getPMpos().first;
-    int curry = m.getPMpos().second;
-    int check =-1;
+    if(Mix_Playing(1)!=1 )
+    {
+        int currx = m.getGpos().first;
+        int curry = m.getGpos().second;
+        int check =-1;
     //std::cout<<m.maze[currx][curry];
 
-        if(keys[SDL_SCANCODE_UP]) {
+        if(keys[SDL_SCANCODE_W]) {
             check= m.maze[currx][curry-1];
             {dir=1;}
         }
-        else if(keys[SDL_SCANCODE_DOWN]) {
+        else if(keys[SDL_SCANCODE_S]) {
             check= m.maze[currx][curry+1];
             
              {dir=4;}
         }
-        else if(keys[SDL_SCANCODE_LEFT]) {
+        else if(keys[SDL_SCANCODE_A]) {
     
             check= m.maze[currx-1][curry];
             
             {dir=3;}
         }
-        else if(keys[SDL_SCANCODE_RIGHT]) {
+        else if(keys[SDL_SCANCODE_D]) {
 
             check= m.maze[currx+1][curry];
             
             {dir=2;}
         }
-
+        
     animate(textureRect,dir,animstartframe,m);
+    }
 }
 
-
+void Ghost::reset(Map &m) {
+    Entity::play_intro=true;
+    m.updatePMpos(m.getGspawn());
+    m.updateGpos(m.getGspawn());
+    Entity::screenPosX= 10+30*m.getGspawn().second;
+    Entity::screenPosY= 10+30*m.getGspawn().first;
+    Entity::entRect.x = Entity::screenPosX;
+    Entity::entRect.y = Entity::screenPosY;
+}
 
 
 
