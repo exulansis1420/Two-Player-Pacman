@@ -4,7 +4,6 @@ This is a Imitation of the classic PacMan game, with some alterations to allow m
 
 Created by Tanishq Dubey(2019CS51077) and Aniket Mishra(2019CS50420) as part of the COP290 (2020-21) course.
 
-
 Instructions for Playing the Game -
 1. You will start by seeing the Menu, Choose START to start playing or HELP to see the controls(esc to go back to Menu)
 2. You can choose to play as PacMan or Blinky the Ghost
@@ -17,6 +16,8 @@ Instructions for Playing the Game -
 Here are some screenshots of the game.
 
 ![menu](SS/Menu.png)
+
+![help](SS/Help.png)
 
 ![char](SS/ChooseChar.png)
 
