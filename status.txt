@@ -1,0 +1,27 @@
+Status - Game runs for 2 players with same keyboard but in an IDE.
+
+We couldn't use linux because of unavailability of free linux virtual machine software on one partner's device and hence Makefile does not work properly.
+
+How to Launch game?
+
+1) Create a project in any IDE example XCode or CodeBlocks.
+2) Add the Pacman master files to that project.
+3) Link the libraries and include paths for SDL 2.0, SDL_mixer 2.0, SDL_image 2.0, SDL_ttf 2.0
+4) Build and run the project
+
+Resources Used
+
+SDL 2.0 and Pacman
+
+https://lazyfoo.net/tutorials/SDL/index.php
+https://github.com/Piotr-Dziekonski/SFML-Pacman-game
+https://galdin.dev/blog/getting-started-with-sdl/
+https://caveofprogramming.com/guest-posts/animating-using-sprite-sheets.html
+
+Maze Generation 
+
+https://shaunlebron.github.io/pacman-mazegen/
+https://medium.com/analytics-vidhya/maze-generations-algorithms-and-visualizations-9f5e88a3ae37
+https://www.mdpi.com/2073-8994/8/11/120/htm
+https://gamedev.stackexchange.com/questions/142524/how-do-you-create-a-perfect-maze-with-walls-that-are-as-thick-as-the-other-tiles
+https://lazyfoo.net/tutorials/SDL/11_clip_rendering_and_sprite_sheets/index.php
