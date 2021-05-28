@@ -1,4 +1,4 @@
-# COPT2a
+# Two Player Pacman
 
 This is a Imitation of the classic PacMan game, with some alterations to allow multiplayer play.
 
