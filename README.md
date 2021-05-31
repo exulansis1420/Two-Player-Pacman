@@ -1,6 +1,6 @@
 # Two Player Pacman
 
-This is a Imitation of the classic PacMan game, with some alterations to allow multiplayer play.
+This is an imitation of the classic PacMan game, with some alterations to allow multiplayer play.
 
 Created by Tanishq Dubey(2019CS51077) and Aniket Mishra(2019CS50420) as part of the COP290 (2020-21) course.
 
